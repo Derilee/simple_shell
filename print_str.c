@@ -17,11 +17,11 @@ int _putchar(char c)
  */
 int print_str(char *str)
 {
-        int c;
+	int c;
 
-        for (c = 0; str[c] != '\0'; c++)
-        {
-                _putchar(str[c]);
-        }
-        return (c);
+	for (c = 0; str[c] != '\0'; c++)
+	{
+	_putchar(str[c]);
+	}
+	return (c);
 }
