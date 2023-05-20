@@ -30,6 +30,8 @@ void handle_error(char *cmd_line);
 /*Tokenizing a line*/
 char **lexical_analysis(char *input);
 
+char *read_line(void);
+
 void *_calloc(unsigned int num, unsigned int size);
 
 #endif
