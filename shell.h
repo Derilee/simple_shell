@@ -15,7 +15,12 @@
 
 /* print functions */
 int _putchar(char c);
-int print_str(char *str)
-int print_alphabet(void);
+int print_str(char *str);
+int _strlen(char *str);
+char *_strcat(char *dest, char *src);
+char *_strcpy(char *dest, char *src);
+int _strcmp(char *s1, char *s2);
+
+void *_calloc(unsigned int num, unsigned int size);
 
 #endif
