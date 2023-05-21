@@ -30,6 +30,11 @@ void handle_error(char *cmd_line);
 /*Tokenizing a line*/
 char **lexical_analysis(char *input);
 
+/*handle built in*/
+int implement_built_in(char **str, int strput, char *line);
+
+int check_built_in(char **str, int strput, char *line);
+
 char *read_line(void);
 
 void *_calloc(unsigned int num, unsigned int size);

@@ -1,29 +1,26 @@
 #include "shell.h"
-
 /**
- * main - start shell.
- *
+ * main - main method that start shell.
  * Return: (0).
  */
-
 int main(void)
 {
-	char *row = NULL;
-	char **tokens = NULL;
-/**	int ct_output = 0;
-*/
-	while (1)
+	char **unit = NULL;
+	char *str = NULL;
+	int strput = 0;
+
+	do
 	{
 		if (isatty(STDIN_FILENO))
+		{
 			write(STDOUT_FILENO, "#cisfun$ ", 10);
+		}
+		str = read_line();
+		unit = lexical_analysis(str);
+		strput = check_built_in(unit, strput, str);
 
-		row = read_line();
-		tokens = lexical_analysis(row);
-	/**	ct_output = check_built-in(tokens, ct_output, row);
-*/
-		free(row);
-		free(tokens);
-	}
-
+		free(str);
+		free(unit);
+	} while(1);
 	return (0);
 }
