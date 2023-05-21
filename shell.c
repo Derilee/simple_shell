@@ -17,7 +17,7 @@ int main(void)
 		}
 		str = read_line();
 		unit = lexical_analysis(str);
-		strput = check_built_in(unit, strput, str);
+		strput = interface_built_in(unit, strput, str);
 
 		free(str);
 		free(unit);

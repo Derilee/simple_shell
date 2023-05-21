@@ -1,13 +1,17 @@
 #include "shell.h"
 /**
- *
- *
+ * implement_built_in - to check the built in function
+ * @str: the string input
+ * @strput: the string output
+ * @line: string line
  */
+
 int implement_built_in(char **str, int strput, char *line)
 {
 	int index = 0, size;
 	char *env;
 	char *_sys[] = {"exit", "env"};
+	extern char **environ;
 
 	if (!_strcmp(_sys[0], str[0]))
 	{
@@ -29,9 +33,12 @@ int implement_built_in(char **str, int strput, char *line)
 }
 
 /**
- * check_built_in
+ * interface_built_in - to check the built in function
+ * @str: the string input
+ * @strput: the string output
+ * @line: string line
  */
-int check_built_in(char **str, int strput, char *line)
+int interface_built_in(char **str, int strput, char *line)
 {
 	char *_sys[] = {"exit", "env"};
 
