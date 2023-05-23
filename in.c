@@ -229,12 +229,12 @@ int shintmode(void)
 			pwd = _getenv("PWD");
 			if (pwd != NULL)
 			{
-				fprintstrs(1, "Homemade shell:", pwd, "$ ", NULL);
+				fprintstrs(1, "root:", pwd, "$ ", NULL);
 				free(pwd);
 			}
 			else
 			{
-				fprintstrs(1, "Homemade shell$", NULL);
+				fprintstrs(1, "root$", NULL);
 			}
 		}
 		lenr = _getline(&bufgl, STDIN_FILENO);
