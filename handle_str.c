@@ -4,9 +4,9 @@
  * @str: the string to be counted
  * Return: the length of the string
  */
-int _strlen(char *str)
+size_t _strlen(char *str)
 {
-	int len = 0;
+	size_t len = 0;
 
 	for (; *str != '\0'; str++)
 	{
@@ -17,9 +17,9 @@ int _strlen(char *str)
 
 /**
 * _strcat - function that concatenates two strings
-* @dest: input value
-* @src: input value
-* Return: void
+* @dest: concat value to
+* @src: caoncat value from
+* Return: concatenated string
 */
 char *_strcat(char *dest, char *src)
 {
@@ -47,9 +47,8 @@ char *_strcat(char *dest, char *src)
 * _strcpy - function that copies the string pointed to by src
 * @dest: copy to
 * @src: copy from
-* Return: string
+* Return: copied string
 */
-
 char *_strcpy(char *dest, char *src)
 {
 	int str = 0;
@@ -68,46 +67,45 @@ char *_strcpy(char *dest, char *src)
 }
 
 /**
-* _strcmp - function to compare string values
-* @s1: input value
-* @s2: input value
-* Return: s1[i] - s2[i]
-*/
-
+ * _strcmp - function to compare two strings
+ * @s1: input value
+ * @s2: input value
+ * Return: str1 - str2, or 0 if they are the same
+ */
 int _strcmp(char *s1, char *s2)
 {
-	int i;
+	int index;
 
-	i = 0;
-	while (s1[i] != '\0' && s2[i] != '\0')
+	index = 0;
+	while (s1[index] != '\0' && s2[index] != '\0')
 	{
-		if (s1[i] != s2[i])
+		if (s1[index] != s2[index])
 		{
-			return (s1[i] - s2[i]);
+			return (s1[index] - s2[index]);
 		}
-		i++;
+		index++;
 	}
 	return (0);
 }
 
 /**
- * _strncmp - function to compare string values
- * @s1: input value
- * @s2: input value
- * @n: input value
- * Return: 0, on sucess. -1, on failure
+ * _strdup - function to duplicate two strings
+ * @str: string value
+ * Return: duplicated string
  */
-int _strncmp(char *s1, char *s2, int n)
+char *_strdup(char *str)
 {
-	while (*s1 && *s2 && n >= 0)
+	char *new_str;
+
+	if (str == NULL)
 	{
-		if (*s1 != *s2)
-		{
-			return (-1);
-		}
-		s1++;
-		s2++;
-		n--;
+		return (NULL);
 	}
-	return (0);
+	new_str = malloc(sizeof(char) * (_strlen(str) + 1));
+	if (new_str == NULL)
+	{
+		return (NULL);
+	}
+	_strcpy(new_str, str);
+	return (new_str);
 }
