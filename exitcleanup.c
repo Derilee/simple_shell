@@ -1,6 +1,6 @@
 #include "shell.h"
 
-char ***get_environ();
+char ***fetchenviron();
 ShellVar **getspecial();
 ShellVar **getvars();
 AliasData **getalist();
@@ -15,7 +15,7 @@ void exitcleanup(char **av)
 {
 	ShellVar *sptr = *(getspecial()), *snext;
 	AliasData *aptr = *(getalist()), *anext;
-	char **environ = *(get_environ());
+	char **environ = *(fetchenviron());
 	int i = 0;
 
 	if (av != NULL)

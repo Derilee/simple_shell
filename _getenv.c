@@ -1,75 +1,76 @@
 #include "shell.h"
 /**
- * getallenv - get all environment
- * Return: environment
- *
+ * fetchallenv - fucntion that fetches all environment variables
+ * Return: an array of strings with the environ variables
  */
-char **getallenv()
+char **fetchallenv(void)
 {
-	char **environ = *(get_environ());
-	char **envcopy;
-	size_t len = 0;
+	char **environ = *(fetchenviron()), **var;
+	size_t all = 0;
 
-	envcopy = environ;
-	while (envcopy[len] != NULL)
-		len++;
-#ifdef DEBUGMODE
-	printf("Got length of env lines %d\nNow copying\n", len);
-#endif
-	envcopy = malloc(sizeof(char **) * (len + 1));
-	if (envcopy == NULL)
-		return (NULL);
-	while (len > 0)
+	var = environ;
+	while (var[all] != NULL)
 	{
-		envcopy[len] = environ[len];
-		len--;
+		all++;
 	}
-	envcopy[len] = environ[len];
-	return (envcopy);
+	var = malloc(sizeof(char **) * (all + 1));
+	if (var == NULL)
+	{
+		return (NULL);
+	}
+	while (all > 0)
+	{
+		var[all] = environ[all];
+		all--;
+	}
+	var[all] = environ[all];
+	return (var);
 }
-/**
- * setallenv - set whole environment for new value
- * @envin: environment
- * @newval: new value to be added
- * Return: 0 if success, -1 if failure
- */
-/* add should be null for first init to not free passed array */
-int setallenv(char **envin, char *newval)
-{
-	char ***environ = get_environ();
-	size_t len = 0;
 
-#ifdef DEBUGMODE
-	printf("In setallenv, newval:%s\n", newval);
-#endif
-	while (envin[len] != NULL)
-		len++;
-	if (newval != NULL)
-		len++;
-	*environ = malloc(sizeof(char **) * (len + 1));
+/**
+ * modallenv - function that modify all environment to a new value
+ * @env: environment variable
+ * @val: value
+ * Return: 0 if successful
+ *        -1, if failure
+ */
+int modallenv(char **env, char *val)
+{
+	char ***environ = fetchenviron();
+	size_t all = 0;
+
+	while (env[all] != NULL)
+		all++;
+	if (val != NULL)
+	{
+		all++;
+	}
+	*environ = malloc(sizeof(char **) * (all + 1));
 	if (*environ == NULL)
 		return (-1);
-	for (len = 0; envin[len] != NULL; len++)
-		if (newval == NULL)
+	all = 0;
+	while (env[all] != NULL)
+	{
+		if (val == NULL)
 		{
-			(*environ)[len] = _strdup(envin[len]);
+			(*environ)[all] = _strdup(env[all]);
 		}
 		else
-			(*environ)[len] = envin[len];
-	if (newval != NULL)
-	{
-#ifdef DEBUGMODE
-		printf("Adding newval:%s\n", newval);
-#endif
-		(*environ)[len] = newval;
-		len++;
+		{
+			(*environ)[all] = env[all];
+		}
+		all++;
 	}
-	(*environ)[len] = NULL;
-#ifdef DEBUGMODE
-	printf("At end. Free old environ if adding a string\n");
-#endif
-	if (newval != NULL)
-		free(envin);
+	if (val != NULL)
+	{
+		(*environ)[all] = val;
+		all++;
+	}
+	(*environ)[all] = NULL;
+	if (val != NULL)
+	{
+		free(env);
+	}
 	return (0);
 }
 /**
@@ -79,7 +80,7 @@ int setallenv(char **envin, char *newval)
  */
 char *_getenv(char *name)
 {
-	char **environ = *(get_environ());
+	char **environ = *(fetchenviron());
 	int i, j;
 	char *s;
 
@@ -112,7 +113,7 @@ char *_getenv(char *name)
  */
 int _setenv(char *name, char *val)
 {
-	char ***environroot = get_environ();
+	char ***environroot = fetchenviron();
 	char **environ = *environroot;
 	int i, j, namel, vall;
 	char *s, *ptr;
@@ -154,7 +155,7 @@ int _setenv(char *name, char *val)
 		}
 		i++;
 	}
-	return (setallenv(*environroot, ptr));
+	return (modallenv(*environroot, ptr));
 }
 /**
  * _unsetenv - unset environment
@@ -165,7 +166,7 @@ int _setenv(char *name, char *val)
  */
 int _unsetenv(char *name)
 {
-	char **environ = *get_environ();
+	char **environ = *fetchenviron();
 	int i, j;
 	int check = 0;
 	char *s;
@@ -203,7 +204,7 @@ int _unsetenv(char *name)
 	}
 	environ[i] = NULL;
 	env = environ;
-	setallenv(env, NULL);
+	modallenv(env, NULL);
 	i = 0;
 	while (env[i])
 	{

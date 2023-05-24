@@ -80,7 +80,7 @@ int cmdcall(char *av[], char *cmd)
 #ifdef DEBUGMODE
 	printf("In cmdcall av[0]:%s\n", av[0]);
 #endif
-	environ = getallenv();
+	environ = fetchallenv();
 	if (environ == NULL)
 		return (-1);
 #ifdef DEBUGMODE
@@ -96,7 +96,7 @@ int cmdcall(char *av[], char *cmd)
 #ifdef DEBUGMODE
 		printf("Executing %s\n", av[0]);
 #endif
-		if (execve(cmd, av, *(get_environ())) == -1)
+		if (execve(cmd, av, *(fetchenviron())) == -1)
 		{
 			if (!access(cmd, F_OK))
 			{

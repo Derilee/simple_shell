@@ -25,12 +25,11 @@ void _printstr(char *str)
 }
 
 /**
- * get_environ - static wrapper copy whole environ
- *
- * Return: environ address
+ * fetchenviron - function to fetch environment
+ * Return: environment address
  */
 
-char ***get_environ()
+char ***fetchenviron(void)
 {
 	static char **environ;
 
@@ -43,7 +42,7 @@ char ***get_environ()
  */
 int _printenv(void)
 {
-	char **environ = *(get_environ());
+	char **environ = *(fetchenviron());
 	int num = 0;
 
 	while (environ[num] != NULL)

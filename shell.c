@@ -218,6 +218,7 @@ int shintmode(void)
 	char *bufgl = NULL, *pwd;
 	ssize_t lenr = 0, eofflag = 0, ret = 0;
 	int istty = isatty(0) && isatty(1);
+	char hostname[256];
 
 	while (!eofflag)
 	{
@@ -229,12 +230,15 @@ int shintmode(void)
 			pwd = _getenv("PWD");
 			if (pwd != NULL)
 			{
-				fprintstrs(1, "root:", pwd, "$ ", NULL);
+			if (gethostname(hostname, sizeof(hostname)) == 0)
+			{
+				fprintstrs(1, "root@", hostname, ":", pwd, "$ ", NULL);
 				free(pwd);
+			}
 			}
 			else
 			{
-				fprintstrs(1, "root$", NULL);
+				fprintstrs(1, "root@", hostname, "$", NULL);
 			}
 		}
 		lenr = _getline(&bufgl, STDIN_FILENO);
@@ -316,7 +320,7 @@ int main(int ac, char *av[], char **environ)
 	free(pidptr);
 	_getline(NULL, -2);
 
-	setallenv(environ, NULL);
+	modallenv(environ, NULL);
 #ifdef DEBUGINIT
 	printf("?:%s\n", getsvar("?"));
 	printf("0:%s\n", getsvar("0"));
