@@ -7,15 +7,10 @@
  */
 int _getline(char **lineptr, int fd)
 {
-	int size = 1025;
-	int old_size = 0;
-	int r = 1;
-	int sum = 0;
+	int size = 1025, old_size = 0, r = 1, sum = 0;
 	static char buffer[1025];
-	static int begin;
-	static int end;
-	int c = 0;
-	int d;
+	static int begin, end;
+	int c = 0, d;
 
 	if (fd == -2)
 	{
@@ -44,7 +39,6 @@ int _getline(char **lineptr, int fd)
 				begin = 0;
 				sum += r;
 				end = sum;
-				/*printf("r : %d\n", r);*/
 				for (d = 0; r != 0 && d < end; d++)
 					if (buffer[d] == '\n')
 						r = 0;
@@ -61,12 +55,8 @@ int _getline(char **lineptr, int fd)
 		{
 			if (begin == 1024)
 			{
-				/*free(buffer);*/
-				/*(*lineptr)[c] = EOF;*/
-				/*return (c);*/
 				break;
 			}
-			/*printf("beginning for\n");//debug check*/
 			if (buffer[begin] == '\n')
 			{
 				(*lineptr)[c] = '\n';
@@ -96,6 +86,5 @@ int _getline(char **lineptr, int fd)
 			(*lineptr)[old_size + begin] = 0;
 			return (c);
 		}
-		/*printf("j: %d, i:%d, r:%d\n", j, i ,r);*/
 	}
 }
