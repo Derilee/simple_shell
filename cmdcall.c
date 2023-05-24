@@ -96,7 +96,7 @@ int cmdcall(char *av[], char *cmd)
 #ifdef DEBUGMODE
 		printf("Executing %s\n", av[0]);
 #endif
-		if (execve(cmd, av, *(getenviron())) == -1)
+		if (execve(cmd, av, *(get_environ())) == -1)
 		{
 			if (!access(cmd, F_OK))
 			{
@@ -149,7 +149,7 @@ int builtincall(char *av[])
 		if (av[1] != NULL)
 			if (av[1][0] >= '0' && av[1][0] <= '9')
 			{
-				retval = _atoi(av[1]);
+				retval = convertStrToInt(av[1]);
 				exitcleanup(av);
 				exit_hist();
 				exit(retval);
@@ -163,7 +163,7 @@ int builtincall(char *av[])
 		else
 		{
 			retstr = getsvar("?");
-			retval = _atoi(retstr);
+			retval = convertStrToInt(retstr);
 			free(retstr);
 			exitcleanup(av);
 			exit_hist();
@@ -172,11 +172,6 @@ int builtincall(char *av[])
 	}
 	else if (!_strcmp(av[0], "cd"))
 		retval = _cd(av);
-/*
- *
- * else if (!_strcmp(av[0], "getenv"))
- *	retval = !printf("%s\n", _getenv(av[1]));
-*/
 	else if (!_strcmp(av[0], "history"))
 		retval = print_hist();
 	else if (!_strcmp(av[0], "help"))

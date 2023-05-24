@@ -6,7 +6,7 @@
  */
 char **getallenv()
 {
-	char **environ = *(getenviron());
+	char **environ = *(get_environ());
 	char **envcopy;
 	size_t len = 0;
 
@@ -36,7 +36,7 @@ char **getallenv()
 /* add should be null for first init to not free passed array */
 int setallenv(char **envin, char *newval)
 {
-	char ***environ = getenviron();
+	char ***environ = get_environ();
 	size_t len = 0;
 
 #ifdef DEBUGMODE
@@ -79,7 +79,7 @@ int setallenv(char **envin, char *newval)
  */
 char *_getenv(char *name)
 {
-	char **environ = *(getenviron());
+	char **environ = *(get_environ());
 	int i, j;
 	char *s;
 
@@ -112,7 +112,7 @@ char *_getenv(char *name)
  */
 int _setenv(char *name, char *val)
 {
-	char ***environroot = getenviron();
+	char ***environroot = get_environ();
 	char **environ = *environroot;
 	int i, j, namel, vall;
 	char *s, *ptr;
@@ -165,7 +165,7 @@ int _setenv(char *name, char *val)
  */
 int _unsetenv(char *name)
 {
-	char **environ = *getenviron();
+	char **environ = *get_environ();
 	int i, j;
 	int check = 0;
 	char *s;

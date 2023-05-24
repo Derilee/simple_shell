@@ -15,6 +15,14 @@
 
 extern char **environ;
 
+/* handle string and print environment */
+int _putchar(char c);
+void _printstr(char *str);
+char ***get_environ(void);
+int _printenv(void);
+int convertStrToInt(char *str);
+
+
 /* handle string */
 size_t _strlen(char *str);
 char *_strcat(char *dest, char *src);
@@ -74,7 +82,6 @@ typedef struct AliasData
 
 
 /* from _printenv.c */
-int _printenv(void);
 
 /* from cmdcall.c */
 int builtincall(char *av[]);
@@ -87,7 +94,6 @@ int parseargs(char **buf);
 int errhandl(int status);
 
 /* from _getenv.c and getenviron.c */
-char ***getenviron(void);
 int setallenv(char **environ, char *add);
 char *_getenv(char *avzero);
 int _setenv(char *name, char *val);
@@ -136,9 +142,6 @@ int exit_hist(void);
 
 
 /* from _printenv.c */
-int _printenv(void);
-int _putchar(char c);
-
 
 
 /*from help.c*/
@@ -146,9 +149,6 @@ int help(char *cmd);
 
 /* from exitcleanup.c */
 void exitcleanup(char **av);
-
-/* from _atoi*/
-int _atoi(char *s);
 
 char *_getpid(void);
 
