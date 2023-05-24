@@ -15,7 +15,7 @@ int _cd(char *av[])
 		return (1);
 	if (av[1] == NULL || av[1][0] == 0)
 	{
-		newpath = _getenv(homestr);
+		newpath = fetchenv(homestr);
 		if (newpath == homestr)
 			newpath = _strdup("");
 		av[1] = newpath;
@@ -24,7 +24,7 @@ int _cd(char *av[])
 	else if (av[1][0] == '-' && av[1][1] == 0)
 	{
 		/*check getenv malloc error here and above*/
-		newpath = _getenv(oldpwdstr);
+		newpath = fetchenv(oldpwdstr);
 		if (newpath == oldpwdstr)
 			newpath = _strdup("");
 		printpath = 1;

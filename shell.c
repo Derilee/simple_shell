@@ -227,7 +227,7 @@ int shintmode(void)
 #endif
 		if (istty)
 		{
-			pwd = _getenv("PWD");
+			pwd = fetchenv("PWD");
 			if (pwd != NULL)
 			{
 			if (gethostname(hostname, sizeof(hostname)) == 0)

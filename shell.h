@@ -31,6 +31,7 @@ char *_strdup(char *str);
 
 int modallenv(char **env, char *val);
 char **fetchallenv(void);
+char *fetchenv(char *details);
 
 /* from in.c */
 int shintmode(void);
@@ -96,7 +97,6 @@ int parseargs(char **buf);
 int errhandl(int status);
 
 /* from _getenv.c and getenviron.c */
-char *_getenv(char *avzero);
 int _setenv(char *name, char *val);
 int _unsetenv(char *name);
 

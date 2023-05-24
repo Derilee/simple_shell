@@ -75,36 +75,30 @@ char **fetchallenv(void)
 }
 
 /**
- * _getenv - get local environment
- * @name: environment variable
- * Return: string of local environment
+ * fetchenv - fetch local environment and return the details
+ * @details: environment variable
+ * Return: details of local environment
  */
-char *_getenv(char *name)
+char *fetchenv(char *details)
 {
 	char **environ = *(fetchenviron());
-	int i, j;
-	char *s;
+	int input, var;
+	char *str;
 
-#ifdef DEBUGMODE
-	printf("In getenv, name:%s\n", name);
-#endif
-	i = 0;
-	while (environ[i] != NULL)
+	input = 0;
+	while (environ[input] != NULL)
 	{
-		s = environ[i];
-		j = 0;
-#ifdef DEBUGSVARS
-		printf("Checking against:%s\n", environ[i]);
-#endif
-		while (s[j] == name[j])
+		str = environ[input];
+		var = 0;
+		while (str[var] == details[var])
 		{
-			j++;
-			if (name[j] == 0 && s[j] == '=')
-				return (_strdup(s + j + 1));
+			var++;
+			if (details[var] == 0 && str[var] == '=')
+				return (_strdup(str + var + 1));
 		}
-		i++;
+		input++;
 	}
-	return (name);
+	return (details);
 }
 /**
  * _setenv - set environment for new value
@@ -168,8 +162,7 @@ int _setenv(char *name, char *val)
 int _unsetenv(char *name)
 {
 	char **environ = *fetchenviron();
-	int i, j;
-	int check = 0;
+	int i, j, check = 0;
 	char *s;
 	char **env;
 

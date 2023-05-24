@@ -15,7 +15,7 @@ int checkpath(char *av[])
 #endif
 	for (ptr = av[0], cmdlen = 0; *ptr != 0; ptr++)
 		cmdlen++;
-	pathvar = _getenv(pathenv);
+	pathvar = fetchenv(pathenv);
 	if (pathvar != pathenv)
 	{
 		pathenv = pathvar;

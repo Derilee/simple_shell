@@ -127,7 +127,7 @@ char *subsvars(char **buf)
 #ifdef DEBUGSVARS
 		printf("Name got:%s\n::varptr:%s\n", name, varptr);
 #endif
-		val = _getenv(name);
+		val = fetchenv(name);
 		if (val == name)
 		{
 #ifdef DEBUGSVARS
@@ -348,7 +348,7 @@ char *tildeexpand(char *buf)
 		endptr = tildeptr;
 		while (*endptr != '/' && *endptr != ' ' && *endptr != 0)
 			endptr++;
-		homepath = _getenv("HOME");
+		homepath = fetchenv("HOME");
 #ifdef DEBUGMODE
 		printf("tildeexpand got homepath:%s\n", homepath);
 #endif
