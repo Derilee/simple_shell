@@ -7,52 +7,45 @@
  */
 int initsvars(int ac, char **av)
 {
-	ShellVar **specialroot = getspecial();
-	ShellVar *special;
-	ShellVar *ptr;
+	PowerShell **specialroot = fetchvariable();
+	PowerShell *special;
+	PowerShell *ptr;
 	int i = 0;
 	char nums[2] = {0, 0};
 
-	/* 0-9, #, $, ?, dash, underscore */
-	*specialroot = malloc(sizeof(ShellVar) * 15);
+	*specialroot = malloc(sizeof(PowerShell) * 15);
 	if (*specialroot == NULL)
 		return (-1);
 	special = *specialroot;
-#ifdef DEBUGMODE
-	printf("special:%p:*getspecial():%p:\n", special, *(getspecial()));
-#endif
-	special->val = _strdup("0");
-	special->name = _strdup("?");
+	special->value = _strdup("0");
+	special->variable = _strdup("?");
 	ptr = special + 1;
-	special->next = ptr;
+	special->dest = ptr;
 	while (av[i] != NULL)
 	{
-#ifdef DEBUGMODE
-		printf("av[%d]=%s\n", i, av[i]);
-#endif
 		nums[0] = i + '0';
-		ptr->val = _strdup(av[i]);
-		ptr->name = _strdup(nums);
-		ptr->next = ptr + 1;
-		ptr = ptr->next;
+		ptr->value = _strdup(av[i]);
+		ptr->variable = _strdup(nums);
+		ptr->dest = ptr + 1;
+		ptr = ptr->dest;
 		i++;
 	}
 	while (i < 10)
 	{
 		nums[0] = i + '0';
-		ptr->val = _strdup("0");
-		ptr->name = _strdup(nums);
-		ptr->next = ptr + 1;
-		ptr = ptr->next;
+		ptr->value = _strdup("0");
+		ptr->variable = _strdup(nums);
+		ptr->dest = ptr + 1;
+		ptr = ptr->dest;
 		i++;
 	}
-	ptr->name = _strdup("$");
-	ptr->val = _strdup("0");
-	ptr->next = ptr + 1;
-	ptr = ptr->next;
-	ptr->name = _strdup("#");
-	ptr->val = itos(ac);
-	ptr->next = NULL;
+	ptr->variable = _strdup("$");
+	ptr->value = _strdup("0");
+	ptr->dest = ptr + 1;
+	ptr = ptr->dest;
+	ptr->variable = _strdup("#");
+	ptr->value = itos(ac);
+	ptr->dest = NULL;
 	return (0);
 }
 /**
@@ -63,42 +56,27 @@ int initsvars(int ac, char **av)
  */
 char *getsvar(char *name)
 {
-	ShellVar *special = *(getspecial()), *vars = *(getvars());
-	ShellVar *ptr = special;
+	PowerShell *variable = *(fetchvariable()), *value = *(fetchvalue());
+	PowerShell *ptr = variable;
 
-	while (ptr != NULL && _strcmp(ptr->name, name))
+	while (ptr != NULL && _strcmp(ptr->variable, name))
 	{
-#ifdef DEBUGMODE
-		printf("Checked .%s. against .%s.\n", name, ptr->name);
-#endif
-		ptr = ptr->next;
+		ptr = ptr->dest;
 	}
 	if (ptr != NULL)
 	{
-#ifdef DEBUGMODE
-		printf("Returning special var %s:%s\n", ptr->name, ptr->val);
-#endif
-		return (_strdup(ptr->val));
+		return (_strdup(ptr->value));
 	}
-	ptr = vars;
-	while (ptr != NULL && _strcmp(ptr->name, name))
+	ptr = value;
+	while (ptr != NULL && _strcmp(ptr->variable, name))
 	{
-#ifdef DEBUGMODE
-		printf("Checked .%s. against .%s.\n", name, ptr->name);
-#endif
-		ptr = ptr->next;
+		ptr = ptr->dest;
 	}
 	if (ptr == NULL)
 	{
-#ifdef DEBUGMODE
-		printf("Var not found %s\n", name);
-#endif
 		return (name);
 	}
-#ifdef DEBUGMODE
-	printf("Returning var %s\n", ptr->val);
-#endif
-	return (_strdup(ptr->val));
+	return (_strdup(ptr->value));
 }
 /**
  * setsvar - sets shell var
@@ -108,68 +86,48 @@ char *getsvar(char *name)
  */
 int setsvar(char *name, char *val)
 {
-	ShellVar **vars = getvars();
-	ShellVar *special = *(getspecial());
-	ShellVar *ptr = special, *new;
+	PowerShell **vars = fetchvalue();
+	PowerShell *special = *(fetchvariable());
+	PowerShell *ptr = special, *new;
 
-#ifdef DEBUGMODE
-	printf("in setsvar, special address: %p\n", special);
-	printf("Got %s %s\n", name, val);
-#endif
-	while (_strcmp(ptr->name, name) && ptr->next != NULL)
+	while (_strcmp(ptr->variable, name) && ptr->dest != NULL)
 	{
-		ptr = ptr->next;
+		ptr = ptr->dest;
 	}
-	if (!_strcmp(ptr->name, name))
+	if (!_strcmp(ptr->variable, name))
 	{
-#ifdef DEBUGMODE
-		printf("Setting special %s to %s\n", ptr->name, val);
-		printf("ptr -> val %p\n", ptr->val);
-#endif
-		free(ptr->val);
-		ptr->val = _strdup(val);
+		free(ptr->value);
+		ptr->value = _strdup(val);
 		return (0);
 	}
 	ptr = *vars;
-#ifdef DEBUGMODE
-	printf("vars address %p\n", *vars);
-#endif
 	if (ptr == NULL)
 	{
-#ifdef DEBUGMODE
-		printf("Setting new list %s to %s\n", name, val);
-#endif
-		new = malloc(sizeof(ShellVar));
+		new = malloc(sizeof(PowerShell));
 		if (new == NULL)
 			return (-1);
-		new->name = _strdup(name);
-		new->val = _strdup(val);
-		new->next = NULL;
+		new->variable = _strdup(name);
+		new->value = _strdup(val);
+		new->dest = NULL;
 		*vars = new;
 		return (0);
 	}
-	while (_strcmp(ptr->name, name) && ptr->next != NULL)
-		ptr = ptr->next;
-	if (ptr != NULL && !_strcmp(ptr->name, name))
+	while (_strcmp(ptr->variable, name) && ptr->dest != NULL)
+		ptr = ptr->dest;
+	if (ptr != NULL && !_strcmp(ptr->variable, name))
 	{
-#ifdef DEBUGMODE
-		printf("Setting %s to %s\n", ptr->name, val);
-#endif
-		free(ptr->val);
-		ptr->val = _strdup(val);
+		free(ptr->value);
+		ptr->value = _strdup(val);
 	}
 	else
 	{
-#ifdef DEBUGMODE
-		printf("Setting new %s to %s\n", name, val);
-#endif
-		new = malloc(sizeof(ShellVar));
+		new = malloc(sizeof(PowerShell));
 		if (new == NULL)
 			return (-1);
-		new->name = _strdup(name);
-		new->val = _strdup(val);
-		new->next = NULL;
-		ptr->next = new;
+		new->variable = _strdup(name);
+		new->value = _strdup(val);
+		new->dest = NULL;
+		ptr->dest = new;
 	}
 	return (0);
 }
@@ -180,37 +138,28 @@ int setsvar(char *name, char *val)
  */
 int unsetsvar(char *name)
 {
-	ShellVar *vars = *getvars();
-	ShellVar *ptr = vars, *next;
+	PowerShell *vars = *fetchvalue();
+	PowerShell *ptr = vars, *next;
 
-#ifdef DEBUGMODE
-	printf("In unsetsvar:vars:%p:name:%s\n", vars, name);
-#endif
 	if (vars == NULL)
 		return (0);
-#ifdef DEBUGMODE
-	printf("ptr->name:%s\n", ptr->name);
-#endif
-	if (!_strcmp(ptr->name, name))
+	if (!_strcmp(ptr->variable, name))
 	{
-#ifdef DEBUGMODE
-		printf("First node match\n");
-#endif
-		*vars = *vars->next;
-		free(ptr->name);
-		free(ptr->val);
+		*vars = *vars->dest;
+		free(ptr->variable);
+		free(ptr->value);
 		free(ptr);
 		return (0);
 	}
-	while (ptr->next != NULL && _strcmp(ptr->next->name, name))
-		ptr = ptr->next;
-	if (!_strcmp(ptr->next->name, name))
+	while (ptr->dest != NULL && _strcmp(ptr->dest->variable, name))
+		ptr = ptr->dest;
+	if (!_strcmp(ptr->dest->variable, name))
 	{
-		next = ptr->next->next;
-		free(ptr->next->name);
-		free(ptr->next->val);
-		free(ptr->next);
-		ptr->next = next;
+		next = ptr->dest->dest;
+		free(ptr->dest->variable);
+		free(ptr->dest->value);
+		free(ptr->dest);
+		ptr->dest = next;
 	}
 	return (0);
 }

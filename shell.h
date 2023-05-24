@@ -16,7 +16,7 @@
 extern char **environ;
 
 
-/* handle string and print environment */
+/* handle string and print string */
 int _putchar(char c);
 void _printstr(char *str);
 size_t _strlen(char *str);
@@ -27,7 +27,7 @@ char *_strdup(char *str);
 int convertStrToInt(char *str);
 
 
-/*handle and print environment */
+/*handle env and print environment */
 char ***fetchenviron(void);
 int _printenv(void);
 int modallenv(char **env, char *val);
@@ -35,6 +35,30 @@ char **fetchallenv(void);
 char *fetchenv(char *details);
 int _setenv(char *variable, char *value);
 int _unsetenv(char *variable);
+
+
+/**
+ * struct PowerShell - Struct PowerShell to list node
+ * @variable: name of the variable
+ * @value: value of the variable 
+ * @dest: destination of the next variable in the list
+ */
+typedef struct PowerShell
+{
+        char *variable;
+        char *value;
+        struct PowerShell *dest;
+} PowerShell;
+
+
+PowerShell **fetchvariable(void);
+PowerShell **fetchvalue(void);
+
+
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
+int _getline(char **lineptr, int fd);
+char *_getpid(void);
+
 
 
 /* from in.c */
@@ -54,20 +78,6 @@ typedef struct HistList
         char *cmd;
         struct HistList *next;
 } HistList;
-
-
-/**
- * struct ShellVar - shellvar list node
- * @name: name of variable
- * @val: value of variable
- * @next: next variable in the list
- */
-typedef struct ShellVar
-{
-        char *name;
-        char *val;
-        struct ShellVar *next;
-} ShellVar;
 
 
 /**
@@ -122,17 +132,11 @@ int initsvars(int ac, char **av);
 char *getsvar(char *name);
 int setsvar(char *name, char *val);
 int unsetsvar(char *name);
-ShellVar **getspecial(void);
-ShellVar **getvars(void);
 
-/* from _realloc.c */
-void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 
 /* from _strtok.c */
 char *strtok(char *str, char *delim);
 
-/* from _getline.c */
-int _getline(char **lineptr, int fd);
 
 char *strtokqe(char *str, char *delim, int escflags);
 
@@ -151,7 +155,6 @@ int help(char *cmd);
 /* from exitcleanup.c */
 void exitcleanup(char **av);
 
-char *_getpid(void);
 
 
 #endif

@@ -1,8 +1,8 @@
 #include "shell.h"
 
 char ***fetchenviron();
-ShellVar **getspecial();
-ShellVar **getvars();
+PowerShell **fetchvariable();
+PowerShell **fetchvalue();
 AliasData **getalist();
 
 /**
@@ -13,7 +13,7 @@ AliasData **getalist();
 
 void exitcleanup(char **av)
 {
-	ShellVar *sptr = *(getspecial()), *snext;
+	PowerShell *sptr = *(fetchvariable()), *snext;
 	AliasData *aptr = *(getalist()), *anext;
 	char **environ = *(fetchenviron());
 	int i = 0;
@@ -27,17 +27,17 @@ void exitcleanup(char **av)
 	free(environ);
 	while (sptr != NULL)
 	{
-		free(sptr->val);
-		free(sptr->name);
-		sptr = sptr->next;
+		free(sptr->value);
+		free(sptr->variable);
+		sptr = sptr->dest;
 	}
-	free(*(getspecial()));
-	sptr = *(getvars());
+	free(*(fetchvariable()));
+	sptr = *(fetchvalue());
 	while (sptr != NULL)
 	{
-		free(sptr->val);
-		free(sptr->name);
-		snext = sptr->next;
+		free(sptr->value);
+		free(sptr->variable);
+		snext = sptr->dest;
 		free(sptr);
 		sptr = snext;
 	}
