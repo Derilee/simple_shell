@@ -6,11 +6,12 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <stdarg.h>
-/*#include <string.h>*/
+#include <dirent.h>
 
-#define _GNU_SOURCE
+/*#define _GNU_SOURCE*/
 
 extern char **environ;
 
