@@ -29,8 +29,8 @@ char *_strcpy(char *dest, char *src);
 int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
 
-char **fetchallenv(void);
 int modallenv(char **env, char *val);
+char **fetchallenv(void);
 
 /* from in.c */
 int shintmode(void);

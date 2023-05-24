@@ -1,33 +1,5 @@
 #include "shell.h"
 /**
- * fetchallenv - fucntion that fetches all environment variables
- * Return: an array of strings with the environ variables
- */
-char **fetchallenv(void)
-{
-	char **environ = *(fetchenviron()), **var;
-	size_t all = 0;
-
-	var = environ;
-	while (var[all] != NULL)
-	{
-		all++;
-	}
-	var = malloc(sizeof(char **) * (all + 1));
-	if (var == NULL)
-	{
-		return (NULL);
-	}
-	while (all > 0)
-	{
-		var[all] = environ[all];
-		all--;
-	}
-	var[all] = environ[all];
-	return (var);
-}
-
-/**
  * modallenv - function that modify all environment to a new value
  * @env: environment variable
  * @val: value
@@ -73,6 +45,35 @@ int modallenv(char **env, char *val)
 	}
 	return (0);
 }
+
+/**
+ * fetchallenv - fucntion that fetches all environment variables
+ * Return: an array of strings with the environ variables
+ */
+char **fetchallenv(void)
+{
+	char **environ = *(fetchenviron()), **var;
+	size_t all = 0;
+
+	var = environ;
+	while (var[all] != NULL)
+	{
+		all++;
+	}
+	var = malloc(sizeof(char **) * (all + 1));
+	if (var == NULL)
+	{
+		return (NULL);
+	}
+	while (all > 0)
+	{
+		var[all] = environ[all];
+		all--;
+	}
+	var[all] = environ[all];
+	return (var);
+}
+
 /**
  * _getenv - get local environment
  * @name: environment variable
