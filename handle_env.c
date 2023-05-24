@@ -85,8 +85,7 @@ char *fetchenv(char *details)
 	int input, var;
 	char *str;
 
-	input = 0;
-	while (environ[input] != NULL)
+	for (input = 0; environ[input] != NULL; input++)
 	{
 		str = environ[input];
 		var = 0;
@@ -94,116 +93,96 @@ char *fetchenv(char *details)
 		{
 			var++;
 			if (details[var] == 0 && str[var] == '=')
+			{
 				return (_strdup(str + var + 1));
+			}
 		}
-		input++;
 	}
 	return (details);
 }
 /**
- * _setenv - set environment for new value
- * @name: name of variable
- * @val: value of variable
- * Return: 0 or setallenv if success, -1 if fail
+ * _setenv - function to implement the setenv builtin command
+ * @variable: variable name
+ * @value: value of the variable
+ * Return: implemented setenv, if successful
+ *          -1 if failure
  */
-int _setenv(char *name, char *val)
+int _setenv(char *variable, char *value)
 {
-	char ***environroot = fetchenviron();
-	char **environ = *environroot;
-	int i, j, namel, vall;
-	char *s, *ptr;
+	char ***newenviron = fetchenviron();
+	char **environ = *newenviron;
+	int input, index, name, var;
+	char *str, *ptr;
 
-#ifdef DEBUGMODE
-	printf("In setenv, name:%s:val:%s\n", name, val);
-#endif
-	if (name == NULL || val == NULL)
+	if (variable == NULL || value == NULL)
 		return (0);
-	namel = _strlen(name);
-	vall = _strlen(val);
-	ptr = malloc(sizeof(char) * (namel + vall + 2));
+	name = _strlen(variable);
+	var = _strlen(value);
+	ptr = malloc(sizeof(char) * (name + var + 2));
 	if (ptr == NULL)
 		return (-1);
-	s = ptr;
-	_strcpy(s, name);
-	s += namel;
-	_strcpy(s++, "=");
-	_strcpy(s, val);
-	s += vall;
-	*s = 0;
-#ifdef DEBUGMODE
-	printf("Ptr mallocd:%s\n", ptr);
-#endif
-	i = 0;
-	while (environ[i] != NULL)
+	str = ptr;
+	_strcpy(str, variable);
+	str += name;
+	_strcpy(str++, "=");
+	_strcpy(str, value);
+	str += var;
+	*str = 0;
+	for (input = 0; environ[input] != NULL; input++)
 	{
-		s = environ[i];
-		j = 0;
-		while (s[j] == name[j])
+		str = environ[input];
+		for (index = 0; str[index] == variable[index]; index++)
 		{
-			j++;
-			if (name[j] == 0 && s[j] == '=')
-			{
-				free(environ[i]);
-				environ[i] = ptr;
-				return (0);
-			}
+		if (variable[index] == 0 && str[index] == '=')
+		{
+			free(environ[input]);
+			environ[input] = ptr;
+			return (0);
 		}
-		i++;
+		}
 	}
-	return (modallenv(*environroot, ptr));
+	return (modallenv(*newenviron, ptr));
 }
 /**
- * _unsetenv - unset environment
- * @name: name of variable to unset
+ * _unsetenv - function to implement the unsetenv builtin command
+ * @variable: variable name to unset
  * Return: 0 if sucess
- *
- * testing functionality  copy environ, if hits skip over, realloc
  */
-int _unsetenv(char *name)
+int _unsetenv(char *variable)
 {
 	char **environ = *fetchenviron();
-	int i, j, check = 0;
-	char *s;
-	char **env;
+	int input, index, name = 0;
+	char *str, **env;
 
-#ifdef DEBUGMODE
-	printf("In unsetenv, name:%s\n", name);
-#endif
-	if (name == NULL)
+	if (variable == NULL)
 		return (0);
-
-	i = 0;
-	while (environ[i] != NULL)
+	for (input = 0; environ[input] != NULL; input++)
 	{
-		s = environ[i];
-		j = 0;
-		while (s[j] == name[j])
+		str = environ[input];
+		for (index = 0; str[index] == variable[index]; index++)
 		{
-			j++;
-			if (s[j] == '=' && name[j] == '\0')
+			if (str[index] == '=' && variable[index] == '\0')
 			{
-				check = 1;
+				name = 1;
 				break;
 			}
 		}
-		if (check == 1)
+		if (name == 1)
 			break;
-		i++;
 	}
-	free(environ[i]);
-	while (environ[i] != NULL)
+	free(environ[input]);
+	for (; environ[input] != NULL; input++)
 	{
-		environ[i] = environ[i + 1];
-		i++;
+		environ[input] = environ[input + 1];
 	}
-	environ[i] = NULL;
+	environ[input] = NULL;
 	env = environ;
 	modallenv(env, NULL);
-	i = 0;
-	while (env[i])
+	input = 0;
+	while (env[input])
 	{
-		free(env[i]);
-		i++;
+		free(env[input]);
+		input++;
 	}
 	free(env);
 	return (0);

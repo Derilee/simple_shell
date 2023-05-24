@@ -15,23 +15,27 @@
 
 extern char **environ;
 
+
 /* handle string and print environment */
 int _putchar(char c);
 void _printstr(char *str);
-char ***fetchenviron(void);
-int _printenv(void);
-int convertStrToInt(char *str);
-
-/* handle string */
 size_t _strlen(char *str);
 char *_strcat(char *dest, char *src);
 char *_strcpy(char *dest, char *src);
 int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
+int convertStrToInt(char *str);
 
+
+/*handle and print environment */
+char ***fetchenviron(void);
+int _printenv(void);
 int modallenv(char **env, char *val);
 char **fetchallenv(void);
 char *fetchenv(char *details);
+int _setenv(char *variable, char *value);
+int _unsetenv(char *variable);
+
 
 /* from in.c */
 int shintmode(void);
@@ -96,9 +100,6 @@ int parseargs(char **buf);
 /* from errhandl.c */
 int errhandl(int status);
 
-/* from _getenv.c and getenviron.c */
-int _setenv(char *name, char *val);
-int _unsetenv(char *name);
 
 
 /* from utility.c */
