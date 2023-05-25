@@ -1,43 +1,42 @@
 #include "shell.h"
 /**
- * initsvars - initialize vars
+ * initializevars - function to initialize variables
  * @ac: arguemnts intiger
  * @av: string arguments
- * Return: int
+ * Return: 0 if successful
  */
-int initsvars(int ac, char **av)
+int initializevars(int ac, char **str)
 {
-	PowerShell **specialroot = fetchvariable();
+	PowerShell **root = fetchvariable();
 	PowerShell *special;
 	PowerShell *ptr;
-	int i = 0;
+	int input = 0;
 	char nums[2] = {0, 0};
 
-	*specialroot = malloc(sizeof(PowerShell) * 15);
-	if (*specialroot == NULL)
+	*root = malloc(sizeof(PowerShell) * 15);
+	if (*root == NULL)
 		return (-1);
-	special = *specialroot;
+	special = *root;
 	special->value = _strdup("0");
 	special->variable = _strdup("?");
 	ptr = special + 1;
 	special->dest = ptr;
-	while (av[i] != NULL)
+	for(input = 0; str[input] != NULL; input++)
 	{
-		nums[0] = i + '0';
-		ptr->value = _strdup(av[i]);
+		nums[0] = input + '0';
+		ptr->value = _strdup(str[input]);
 		ptr->variable = _strdup(nums);
 		ptr->dest = ptr + 1;
 		ptr = ptr->dest;
-		i++;
 	}
-	while (i < 10)
+	while (input < 10)
 	{
-		nums[0] = i + '0';
+		nums[0] = input + '0';
 		ptr->value = _strdup("0");
 		ptr->variable = _strdup(nums);
 		ptr->dest = ptr + 1;
 		ptr = ptr->dest;
-		i++;
+		input++;
 	}
 	ptr->variable = _strdup("$");
 	ptr->value = _strdup("0");
@@ -50,8 +49,7 @@ int initsvars(int ac, char **av)
 }
 /**
  * getsvar - gets shell variable
- * @name: name of shell var
- *
+ * @name: name of the shell var
  * Return: original argument if not found
  */
 char *getsvar(char *name)

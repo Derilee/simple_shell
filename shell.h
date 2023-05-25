@@ -106,7 +106,7 @@ int unsetalias(char *name);
 int aliascmd(char *av[]);
 
 
-
+/*cmd and path handler */
 int checkpath(char *av[]);
 int builtincall(char *av[]);
 int cmdcall(char *av[], char *path);
@@ -119,19 +119,20 @@ char *subsvars(char **buf);
 char *cleanarg(char *arg);
 char *tildeexpand(char *buf);
 
-
+/*main header with needed fucntions*/
 int inputvalidator(char **buf, int fd);
 int shintmode(void);
 int scriptmode(char *av[]);
 int main(int ac, char *av[], char **environ);
 
 
-int initsvars(int ac, char **av);
+/* handle shell veriables */
+int initializevars(int ac, char **str);
 char *getsvar(char *name);
 int setsvar(char *name, char *val);
 int unsetsvar(char *name);
 
-
+/*tokenization of string */
 char *strtok(char *str, char *delim);
 char *strtokqe(char *str, char *delim, int escflags);
 int _cd(char *av[]);

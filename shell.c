@@ -283,7 +283,7 @@ int main(int ac, char *av[], char **environ)
 
 	char *pidptr;
 
-	initsvars(ac - 1, av);
+	initializevars(ac - 1, av);
 	pidptr = _getpid();
 	setsvar("$", pidptr);
 	free(pidptr);
