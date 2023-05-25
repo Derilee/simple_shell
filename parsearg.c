@@ -1,8 +1,8 @@
 #include "shell.h"
 /**
- * parsesetsvar - parse set shell vars, returns new buf after var setting
- * @buf: buffer
- * Return: string
+ * parsesetsvar - parse set shell vars
+ * @buf: temporary storage
+ * Return: new string
  */
 char *parsesetsvar(char *buf)
 {
@@ -51,8 +51,8 @@ char *parsesetsvar(char *buf)
 }
 
 /**
- * subsvars - substitutes in svars for $names
- * @buf: buffer string that was input
+ * subsvars - function that substitutes shell vars
+ * @buf: buffer string to be inputed
  * Return: processed buffer string
  */
 char *subsvars(char **buf)
@@ -135,10 +135,8 @@ char *subsvars(char **buf)
 }
 
 /**
- * cleanarg - cleans escapes and functional quotes
- *
+ * cleanarg - cleans arguments and functional quotes
  * @arg: - argument to clean
- *
  * Return: cleaned argument
  */
 char *cleanarg(char *arg)
@@ -247,9 +245,7 @@ char *cleanarg(char *arg)
 
 /**
  * tildeexpand - handle expanding ~ where appropriate
- *
  * @buf: buffer to process
- *
  * Return: processed buffer
  */
 char *tildeexpand(char *buf)
@@ -324,9 +320,9 @@ char *tildeexpand(char *buf)
 	return (newbuf);
 }
 /**
- * parseargs - parse arguments function, frees buf at end
+ * parseargs - parse arguments function
  * @buf: buffer pointer
- * Return: return value of command
+ * Return: return value of command and frees buffer
  */
 int parseargs(char **buf)
 {
