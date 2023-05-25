@@ -24,6 +24,11 @@ char *_strcpy(char *dest, char *src);
 int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
 int convertStrToInt(char *str);
+char *itos(int digits);
+char *_strchr(char *s, char c);
+int fprintstrs(int fd, char *str, ...);
+int printerr(char *);
+int linecount(int);
 
 
 /*handle env and print environment */
@@ -102,55 +107,35 @@ int aliascmd(char *av[]);
 
 
 
-/* from in.c */
-int shintmode(void);
-/* from _printenv.c */
-
-/* from cmdcall.c */
+int checkpath(char *av[]);
 int builtincall(char *av[]);
 int cmdcall(char *av[], char *path);
+int help(char *cmd);
 
-/* from parser.c */
+
+char *parsesetsvar(char *buf);
 int parseargs(char **buf);
-
-/* from errhandl.c */
-int errhandl(int status);
-
-
-
-/* from utility.c */
-char *itos(int digits);
-char *_strchr(char *s, char c);
-int fprintstrs(int fd, char *str, ...);
-int printerr(char *);
-int linecount(int);
-
-/* from cd.c */
-int _cd(char *av[]);
+char *subsvars(char **buf);
+char *cleanarg(char *arg);
+char *tildeexpand(char *buf);
 
 
-/* from shellvars.c */
+int inputvalidator(char **buf, int fd);
+int shintmode(void);
+int scriptmode(char *av[]);
+int main(int ac, char *av[], char **environ);
+
+
 int initsvars(int ac, char **av);
 char *getsvar(char *name);
 int setsvar(char *name, char *val);
 int unsetsvar(char *name);
 
 
-/* from _strtok.c */
 char *strtok(char *str, char *delim);
-
-
 char *strtokqe(char *str, char *delim, int escflags);
-
-
-
-
-/*from help.c*/
-int help(char *cmd);
-
-/* from exitcleanup.c */
+int _cd(char *av[]);
 void exitcleanup(char **av);
-
 
 
 #endif
