@@ -10,9 +10,6 @@ int checkpath(char *av[])
 	char *path, *pathptr, *pathvar, *ptr, *pathenv = "PATH", *linect;
 	int pathlen, cmdlen;
 
-#ifdef DEBUGMODE
-	printf("In checkpath\n");
-#endif
 	for (ptr = av[0], cmdlen = 0; *ptr != 0; ptr++)
 		cmdlen++;
 	pathvar = fetchenv(pathenv);
@@ -21,9 +18,6 @@ int checkpath(char *av[])
 		pathenv = pathvar;
 		while (*pathvar != 0)
 		{
-#ifdef DEBUGMODE
-			printf("in loop pathvar:%s:*pathvar:%c\n", pathvar, *pathvar);
-#endif
 			for (pathlen = 0, ptr = pathvar; *ptr != 0 && *ptr != ':'; ptr++)
 				pathlen++;
 			path = malloc(sizeof(char) * (cmdlen + pathlen + 2));
@@ -43,9 +37,6 @@ int checkpath(char *av[])
 			*pathptr = 0;
 			if (!access(path, F_OK))
 			{
-#ifdef DEBUGMODE
-				printf("Found path:%s\n", path);
-#endif
 				pathlen = cmdcall(av, path);
 				free(path);
 				free(pathenv);
@@ -77,25 +68,12 @@ int cmdcall(char *av[], char *cmd)
 	int status;
 	char *linect, *dolz;
 
-#ifdef DEBUGMODE
-	printf("In cmdcall av[0]:%s\n", av[0]);
-#endif
 	environ = fetchallenv();
 	if (environ == NULL)
 		return (-1);
-#ifdef DEBUGMODE
-	printf("Forking\n");
-#endif
 	command = fork();
-#ifdef DEBUGMODE
-	printf("command:%d\n", command);
-	fflush(stdout);
-#endif
 	if (command == 0)
 	{
-#ifdef DEBUGMODE
-		printf("Executing %s\n", av[0]);
-#endif
 		if (execve(cmd, av, *(fetchenviron())) == -1)
 		{
 			if (!access(cmd, F_OK))
@@ -114,17 +92,11 @@ int cmdcall(char *av[], char *cmd)
 			}
 			exit(1);
 		}
-#ifdef DEBUGMODE
-		printf("Command done\n");
-#endif
 	}
 	else
 	{
 		wait(&status);
 	}
-#ifdef DEBUGMODE
-	printf("Status %d\n", status);
-#endif
 	free(environ);
 	return (status);
 }
@@ -140,10 +112,6 @@ int builtincall(char *av[])
 
 	if (av[0] == NULL)
 		return (0);
-#ifdef DEBUGMODE
-	printf("In builtincall %p\n%s\n", av[0], av[0]);
-	printf("av[1]:%s\n", av[1]);
-#endif
 	if (!_strcmp(av[0], "exit"))
 	{
 		if (av[1] != NULL)
@@ -151,7 +119,7 @@ int builtincall(char *av[])
 			{
 				retval = convertStrToInt(av[1]);
 				exitcleanup(av);
-				exit_hist();
+				exitshellstate();
 				exit(retval);
 			}
 			else
@@ -166,14 +134,14 @@ int builtincall(char *av[])
 			retval = convertStrToInt(retstr);
 			free(retstr);
 			exitcleanup(av);
-			exit_hist();
+			exitshellstate();
 			exit(retval);
 		}
 	}
 	else if (!_strcmp(av[0], "cd"))
 		retval = _cd(av);
 	else if (!_strcmp(av[0], "history"))
-		retval = print_hist();
+		retval = printshellstate();
 	else if (!_strcmp(av[0], "help"))
 		retval = help(av[1]);
 	else if (!_strcmp(av[0], "env"))
@@ -194,15 +162,9 @@ int builtincall(char *av[])
 		retval = checkpath(av);
 	else
 		retval = cmdcall(av, av[0]);
-#ifdef DEBUGMODE
-	printf("After call back in builtin retval:%d\n", retval);
-#endif
 	if (retval % 256 == 0)
 		retval /= 256;
 	retstr = itos(retval % 128);
-#ifdef DEBUGMODE
-	printf("Status string:%s\n", retstr);
-#endif
 	setsvar("?", retstr);
 	free(retstr);
 	return (retval);

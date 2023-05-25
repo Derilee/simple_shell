@@ -11,7 +11,6 @@
 #include <stdarg.h>
 #include <dirent.h>
 
-/*#define _GNU_SOURCE*/
 
 extern char **environ;
 
@@ -37,6 +36,7 @@ int _setenv(char *variable, char *value);
 int _unsetenv(char *variable);
 
 
+/* handles the powershell*/
 /**
  * struct PowerShell - Struct PowerShell to list node
  * @variable: name of the variable
@@ -50,7 +50,6 @@ typedef struct PowerShell
         struct PowerShell *dest;
 } PowerShell;
 
-
 PowerShell **fetchvariable(void);
 PowerShell **fetchvalue(void);
 
@@ -60,44 +59,51 @@ int _getline(char **lineptr, int fd);
 char *_getpid(void);
 
 
+/* handles and print shell state history*/
+/**
+ * struct ShellState - struct shellstate to linked list node
+ * @cmd: command line entered on the shell
+ * @dest: pointer to the destination of the next node
+ */
+
+typedef struct ShellState
+{
+        char *cmd;
+        struct ShellState *dest;
+} ShellState;
+
+ShellState **getshellstate();
+int setshellstate(char *cmd);
+int printshellstate(void);
+int exitshellstate(void);
+
+
+/* handles and print alias*/
+/**
+ * struct alias - Prints a list of all aliases, one per line,
+ *                in the form name='value'
+ * @name: defines an alias
+ * @value: given value
+ * @dest: pointer to destination of the  next node
+ */
+
+typedef struct alias
+{
+        char *name;
+        char *value;
+        struct alias *dest;
+} alias;
+
+alias **fetchall();
+char *fetchalias(char *name);
+int printalias(char *name, char *val);
+int unsetalias(char *name);
+int aliascmd(char *av[]);
+
+
 
 /* from in.c */
 int shintmode(void);
-
-
-/**
- * struct HistList - singly linked list
- * @cmd: command line entered
- * @next: pointer to the next node
- * Description: singly linked list node structure for History 
- * for Holberton project
- */
-
-typedef struct HistList
-{
-        char *cmd;
-        struct HistList *next;
-} HistList;
-
-
-/**
- * struct AliasData - struct for alias function
- * @AliasData - name of the struct
- * @name: name of the alias value
- * @val: value for the alias
- * @next: pointer to next node
- *
- */
-
-typedef struct AliasData
-{
-        char *name;
-        char *val;
-        struct AliasData *next;
-} AliasData;
-
-
-
 /* from _printenv.c */
 
 /* from cmdcall.c */
@@ -122,10 +128,6 @@ int linecount(int);
 /* from cd.c */
 int _cd(char *av[]);
 
-/* from alias.c */
-int aliascmd(char **av);
-char *getalias(char *name);
-int unsetalias(char *name);
 
 /* from shellvars.c */
 int initsvars(int ac, char **av);
@@ -140,13 +142,7 @@ char *strtok(char *str, char *delim);
 
 char *strtokqe(char *str, char *delim, int escflags);
 
-/*from history.c*/
-int sethist(char *cmd);
-int print_hist(void);
-int exit_hist(void);
 
-
-/* from _printenv.c */
 
 
 /*from help.c*/

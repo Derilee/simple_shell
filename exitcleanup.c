@@ -3,7 +3,7 @@
 char ***fetchenviron();
 PowerShell **fetchvariable();
 PowerShell **fetchvalue();
-AliasData **getalist();
+alias **fetchall();
 
 /**
  * exitcleanup - cleans up various vars before exiting
@@ -14,7 +14,7 @@ AliasData **getalist();
 void exitcleanup(char **av)
 {
 	PowerShell *sptr = *(fetchvariable()), *snext;
-	AliasData *aptr = *(getalist()), *anext;
+	alias *aptr = *(fetchall()), *anext;
 	char **environ = *(fetchenviron());
 	int i = 0;
 
@@ -43,9 +43,9 @@ void exitcleanup(char **av)
 	}
 	while (aptr != NULL)
 	{
-		free(aptr->val);
+		free(aptr->value);
 		free(aptr->name);
-		anext = aptr->next;
+		anext = aptr->dest;
 		free(aptr);
 		aptr = anext;
 	}

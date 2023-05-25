@@ -4,115 +4,106 @@
  * Return: address alist
  *
  */
-AliasData **getalist()
+alias **fetchall()
 {
-	static AliasData *alist;
+	static alias *adr;
 
-	return (&alist);
+	return (&adr);
 }
+
 /**
- * getalias - get alias value
- * returns original argument if not found
+ * fetchalias - fetches all alias value
  * @name: name of alias
  * Return: original argument if not found, otherwise value
  */
-char *getalias(char *name)
+char *fetchalias(char *name)
 {
-	AliasData *alist = *(getalist());
-	AliasData *ptr = alist;
+	alias *all = *(fetchall());
+	alias *ptr = all;
 
 	while (ptr != NULL && _strcmp(ptr->name, name))
 	{
-#ifdef DEBUGMODE
-		printf("Checked .%s. against .%s.\n", name, ptr->name);
-#endif
-		ptr = ptr->next;
+		ptr = ptr->dest;
 	}
 	if (ptr == NULL)
 	{
-#ifdef DEBUGMODE
-		printf("Alias not found %s\n", name);
-#endif
 		return (name);
 	}
-#ifdef DEBUGMODE
-	printf("Checking alias %s\n", ptr->val);
-#endif
-
 	free(name);
-	return (getalias(_strdup(ptr->val)));
+	return (fetchalias(_strdup(ptr->value)));
 }
+
 /**
- * setalias - set alias and value
+ * printalias - print alias and value
  * @name: name of alias
  * @val: value to set alias to
  * Return: 0 upon success
  */
-int setalias(char *name, char *val)
+int printalias(char *name, char *val)
 {
-	AliasData **alistroot = getalist();
-	AliasData *alist = *alistroot;
-	AliasData *ptr = alist, *new;
+	alias **alistroot = fetchall();
+	alias *alist = *alistroot;
+	alias *ptr = alist, *new;
 
 	if (alist == NULL)
 	{
-		new = malloc(sizeof(AliasData));
+		new = malloc(sizeof(alias));
 		if (new == NULL)
 			return (-1);
 		new->name = name;
-		new->val = val;
-		new->next = NULL;
+		new->value = val;
+		new->dest = NULL;
 		*alistroot = new;
 		return (0);
 	}
-	while (_strcmp(ptr->name, name) && ptr->next != NULL)
-		ptr = ptr->next;
+	while (_strcmp(ptr->name, name) && ptr->dest != NULL)
+		ptr = ptr->dest;
 	if (!_strcmp(ptr->name, name))
 	{
-		free(ptr->val);
-		ptr->val = val;
+		free(ptr->value);
+		ptr->value = val;
 		free(name);
 	}
 	else
 	{
-		new = malloc(sizeof(AliasData));
+		new = malloc(sizeof(alias));
 		if (new == NULL)
 			return (-1);
 		new->name = name;
-		new->val = val;
-		new->next = NULL;
-		ptr->next = new;
+		new->value = val;
+		new->dest = NULL;
+		ptr->dest = new;
 	}
 	return (0);
 }
 /**
- * unsetalias - unset alias of @name
- * @name: name of alias value to unset
- * Return: 0 if sucess
+ * unsetalias - unset alias of name variable
+ * @name: name of the alias
+ * Return: 0 if sucessful
  */
 int unsetalias(char *name)
 {
-	AliasData *alist = *(getalist());
-	AliasData *ptr = alist, *next;
+	alias *alist = *(fetchall());
+	alias *ptr = alist, *next;
 
 	if (alist == NULL)
 		return (0);
 	if (!(_strcmp(ptr->name, name)))
 	{
-		alist = alist->next;
-		free(ptr->val);
+		alist = alist->dest;
+		free(ptr->value);
 		free(ptr);
 		return (0);
 	}
 
-	while (ptr->next != NULL && _strcmp(ptr->next->name, name))
-		ptr = ptr->next;
-	if (!_strcmp(ptr->next->name, name))
+	while (ptr->dest != NULL && _strcmp(ptr->dest->name, name))
+		ptr = ptr->dest;
+	if (!_strcmp(ptr->dest->name, name))
 	{
-		next = ptr->next->next;
-		free(ptr->next->name);
-		free(ptr->next);
-		ptr->next = next;
+		next = ptr->dest->dest;
+		free(ptr->dest->name);
+		free(ptr->dest);
+		ptr->dest = next;
 	}
 	return (0);
 }
@@ -123,39 +114,26 @@ int unsetalias(char *name)
  */
 int aliascmd(char *av[])
 {
-	AliasData *alist = *(getalist());
-	AliasData *ptr = alist;
+	alias *alist = *(fetchall());
+	alias *ptr = alist;
 	int i;
 	char *name, *val;
 
-#ifdef DEBUGMODE
-	printf("av1 %p ptr %p\n", av[1], ptr);
-	printf("av1 %s\n", av[1]);
-#endif
 	if (av[1] == NULL)
 	{
 		while (ptr != NULL)
 		{
-			fprintstrs(1, ptr->name, "='", ptr->val, "'\n", NULL);
-			ptr = ptr->next;
+			fprintstrs(1, ptr->name, "='", ptr->value, "'\n", NULL);
+			ptr = ptr->dest;
 		}
 		return (0);
 	}
-#ifdef DEBUGMODE
-	printf("Not blank args\n");
-#endif
 	for (i = 1; av[i] != NULL; i++)
 	{
-#ifdef DEBUGMODE
-		printf("Alias arg %s\n", av[i]);
-#endif
 		name = strtok(av[i], "=");
 		val = strtok(NULL, "=");
 		if (val != NULL)
 		{
-#ifdef DEBUGMODE
-			printf("Setting alias:%s:to:%s:\n", name, val);
-#endif
 			name = _strdup(name);
 			if (name == NULL)
 				return (-1);
@@ -165,18 +143,12 @@ int aliascmd(char *av[])
 				free(name);
 				return (-1);
 			}
-			setalias(name, val);
+			printalias(name, val);
 		}
 		else
 		{
-#ifdef DEBUGMODE
-			printf("Printing alias:%s:\n", name);
-#endif
 			val = _strdup(name);
-			val = getalias(val);
-#ifdef DEBUGMODE
-			printf("Val:%s\n", val);
-#endif
+			val = fetchalias(val);
 			if (!_strcmp(val, name))
 			{
 				fprintstrs(1, "alias: ", name, " not found\n", NULL);

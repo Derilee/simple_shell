@@ -24,9 +24,6 @@ int inputvalidator(char **buf, int fd)
 		return (0);
 	while (*bufptr)
 	{
-#ifdef DEBUGVALID
-		printf("In valid loop complete:%d:bufptr:%s", complete, bufptr);
-#endif
 		while ((*bufptr == ' ' || *bufptr == '\n') && !(complete & 3))
 			bufptr++;
 		if (*bufptr == 0)
@@ -87,9 +84,6 @@ int inputvalidator(char **buf, int fd)
 			break;
 		}
 		complete &= ~4;
-#ifdef DEBUGVALID
-		printf("!(complete&3):%d\n", !(complete & 3));
-#endif
 		if (*bufptr == '"' && !(complete & 3))
 		{
 			complete |= 2;
@@ -165,14 +159,8 @@ int inputvalidator(char **buf, int fd)
 		}
 		bufptr++;
 	}
-#ifdef DEBUGVALID
-	printf("out of while complete:%d\n", complete);
-#endif
 	if (complete & 7)
 	{
-#ifdef DEBUGVALID
-		printf("not complete:%d", complete);
-#endif
 		bufgl = NULL;
 		if (isatty(fd))
 			fprintstrs(1, ">", NULL);
@@ -186,26 +174,16 @@ int inputvalidator(char **buf, int fd)
 		}
 		if (lenr == -1)
 		{
-			; /* do something here if getline fails */
 		}
 		lenbuf = _strlen(*buf);
 		newbuf = malloc(lenbuf + lenr + 1);
-		/* check malloc fail here */
 		_strcpy(newbuf, *buf);
 		_strcpy(newbuf + lenbuf, bufgl);
 		free(*buf);
 		free(bufgl);
-#ifdef DEBUGVALID
-		printf("Passing buf:%s\n", newbuf);
-#endif
 		return (inputvalidator(&newbuf, fd));
 	}
-#ifdef DEBUGVALID
-	printf("Final buf:%s\n", *buf);
-#endif
-	/*history begin*/
-	sethist(*buf);
-	/*end history*/
+	setshellstate(*buf);
 	return (parseargs(buf));
 }
 
@@ -222,9 +200,6 @@ int shintmode(void)
 
 	while (!eofflag)
 	{
-#ifdef DEBUGMODE
-		printf("At terminal prompt\n");
-#endif
 		if (istty)
 		{
 			pwd = fetchenv("PWD");
@@ -249,9 +224,6 @@ int shintmode(void)
 		}
 		if (bufgl[lenr - 1] != '\n')
 			eofflag = 1;
-#ifdef DEBUGMODE
-		printf("calling parseargs %s\n", bufgl);
-#endif
 		ret = inputvalidator(&bufgl, STDIN_FILENO);
 		bufgl = NULL;
 		if (eofflag)
@@ -287,9 +259,6 @@ int scriptmode(char *av[])
 		}
 		if (bufgl[lenr - 1] != '\n')
 			eofflag = 1;
-#ifdef DEBUGMODE
-		printf("calling parseargs %s\n", bufgl);
-#endif
 		ret = inputvalidator(&bufgl, STDIN_FILENO);
 		bufgl = NULL;
 		if (eofflag)
@@ -321,17 +290,11 @@ int main(int ac, char *av[], char **environ)
 	_getline(NULL, -2);
 
 	modallenv(environ, NULL);
-#ifdef DEBUGINIT
-	printf("?:%s\n", getsvar("?"));
-	printf("0:%s\n", getsvar("0"));
-	setsvar(_strdup("simplevar"), _strdup("98"));
-	printf("simplevar:%s\n", getsvar("simplevar"));
-#endif
 	if (ac > 1)
 		ret = scriptmode(av);
 	else
 		ret = shintmode();
 	exitcleanup(NULL);
-	exit_hist();
+	exitshellstate();
 	return (ret);
 }

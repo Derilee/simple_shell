@@ -1,112 +1,109 @@
 #include "shell.h"
 
 /**
- * gethistory - gets the history list
- * Return: 0 uposon success
+ * shellstate - gets a list of the shell state
+ * Return: address of the shell state
  */
 
-HistList **gethistory()
+ShellState **getshellstate()
 {
-	static HistList *hlist;
+	static ShellState *adr;
 
-	return (&hlist);
+	return (&adr);
 }
 
 /**
- * sethist - set hist and value
- * @cmd: command
+ * setshellstate - set shellstate and value
+ * @cmd: command entered
  * Return: 0 upon success
  */
 
-int sethist(char *cmd)
+int setshellstate(char *cmd)
 {
-	HistList **hlistroot = gethistory();
-	HistList *hlist = *hlistroot;
-	HistList *ptr = hlist, *new;
+	ShellState **root = getshellstate();
+	ShellState *shs = *root;
+	ShellState *ptr = shs, *new;
 
-	if (hlist == NULL)
+	if (shs == NULL)
 	{
-		new = malloc(sizeof(HistList));
+		new = malloc(sizeof(ShellState));
 		if (new == NULL)
 			return (-1);
 
 		new->cmd = _strdup(cmd);
-		new->next = NULL;
-		*hlistroot = new;
+		new->dest = NULL;
+		*root = new;
 		return (0);
 	}
-	while (ptr->next != NULL)
-		ptr = ptr->next;
+	while (ptr->dest != NULL)
+		ptr = ptr->dest;
 
-	new = malloc(sizeof(HistList));
+	new = malloc(sizeof(ShellState));
 	if (new == NULL)
 		return (-1);
 	new->cmd = _strdup(cmd);
-	new->next = NULL;
-	ptr->next = new;
+	new->dest = NULL;
+	ptr->dest = new;
 	return (0);
 }
 
 /**
- * print_hist - prints all elements of listint
- *
- * Return: num of elements
+ * printshellstate - prints all elements of shellstate
+ * Return: total number of elements
  */
 
-int print_hist(void)
+int printshellstate(void)
 {
-	HistList **hlistroot = gethistory();
-	HistList *h = *hlistroot;
-	int i;
-	int len, numlen;
+	ShellState **root = getshellstate();
+	ShellState *h = *root;
+	int total, len, numlen;
 	char *s, *num;
 
-	i = 0;
+	total = 0;
 	while (h != NULL)
 	{
 		len = _strlen(h->cmd);
 		s = h->cmd;
-		num = itos(i);
+		num = itos(total);
 		numlen = _strlen(num);
 		write(1, num, numlen);
 		_putchar(' ');
 		write(1, s, len);
-		h = h->next;
-		i++;
+		h = h->dest;
+		total++;
 	}
-	return (i);
+	return (total);
 }
 
 /**
- * exit_hist - exit history and copy to file
- * Return: int
+ * exitshellstate - exit shellstate and send a copy to file
+ * Return: a shell history file if successful, otherwise 1
  */
 
-int exit_hist(void)
+int exitshellstate(void)
 {
 
-	int fd;
-	char *file = ".simple_shell_history";
-	int len;
+	int fd, len;
+	char *file = ".shell_history";
 	char *s;
 
-	HistList **hlistroot = gethistory();
-	HistList *hlist = *hlistroot;
-	HistList *ptr = hlist;
+	ShellState **root = getshellstate();
+	ShellState *shs = *root;
+	ShellState *ptr = shs;
 
 	fd = open(file, O_CREAT | O_RDWR, 0600);
 	if (fd == -1)
 		return (-1);
 
-	while (hlist != NULL)
+	while (shs != NULL)
 	{
-		ptr = hlist->next;
-		s = hlist->cmd;
+		ptr = shs->dest;
+		s = shs->cmd;
 		len = _strlen(s);
 		write(fd, s, len);
-		free(hlist->cmd);
-		free(hlist);
-		hlist = ptr;
+		free(shs->cmd);
+		free(shs);
+		shs = ptr;
 	}
 
 	close(fd);
