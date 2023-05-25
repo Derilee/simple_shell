@@ -151,7 +151,7 @@ int builtincall(char *av[])
 	else if (!_strcmp(av[0], "unsetenv"))
 		retval = _unsetenv(av[1]);
 	else if (!_strcmp(av[0], "alias"))
-		retval = aliascmd(av);
+		retval = aliasmgt(av);
 	else if (!_strcmp(av[0], "unset"))
 		retval = unsetsvar(av[1]);
 	else if (!_strcmp(av[0], "unalias"))

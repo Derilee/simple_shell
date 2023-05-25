@@ -103,8 +103,7 @@ alias **fetchall();
 char *fetchalias(char *name);
 int printalias(char *name, char *val);
 int unsetalias(char *name);
-int aliascmd(char *av[]);
-
+int aliasmgt(char *argv[]);
 
 /*cmd and path handler */
 int chpath(char *av[]);

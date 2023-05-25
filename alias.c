@@ -108,47 +108,52 @@ int unsetalias(char *name)
 	return (0);
 }
 /**
- * aliascmd - tokenizes arguments for alias command
- * @av: arguments
- * Return: 1
+ * aliasmgt - tokenizes arguments for alias command
+ * @argv: arguments vector
+ * Return: 0 if successful
  */
-int aliascmd(char *av[])
+int aliasmgt(char *argv[])
 {
-	alias *alist = *(fetchall());
-	alias *ptr = alist;
-	int i;
+	alias *Tlist = *(fetchall());
+	alias *ptr = Tlist;
+	int input = 1;
 	char *name, *val;
 
-	if (av[1] == NULL)
+	if (argv[1] == NULL)
 	{
-		while (ptr != NULL)
+		do
 		{
 			fprintstrs(1, ptr->name, "='", ptr->value, "'\n", NULL);
 			ptr = ptr->dest;
-		}
+		} while (ptr != NULL);
 		return (0);
 	}
-	for (i = 1; av[i] != NULL; i++)
+
+	do
 	{
-		name = strtok(av[i], "=");
+		name = strtok(argv[input], "=");
 		val = strtok(NULL, "=");
+
 		if (val != NULL)
 		{
 			name = _strdup(name);
 			if (name == NULL)
 				return (-1);
+
 			val = _strdup(val);
 			if (val == NULL)
 			{
 				free(name);
 				return (-1);
 			}
+
 			printalias(name, val);
 		}
 		else
 		{
 			val = _strdup(name);
 			val = fetchalias(val);
+
 			if (!_strcmp(val, name))
 			{
 				fprintstrs(1, "alias: ", name, " not found\n", NULL);
@@ -160,6 +165,9 @@ int aliascmd(char *av[])
 				free(val);
 			}
 		}
-	}
+
+		input++;
+	} while (argv[input] != NULL);
+
 	return (0);
 }

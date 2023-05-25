@@ -1,0 +1,22 @@
+CC = gcc
+SRC = *.c
+OBJ = $(SRC:.c=.o)
+NAME = hsh
+RM = rm -f
+CFLAGS = -Wall -Werror -Wextra -pedantic -std=gnu89
+
+.PHONY: all clean oclean fclean
+
+all: $(NAME)
+
+$(NAME): $(OBJ)
+	$(CC) $(OBJ) -o $(NAME)
+
+clean:
+	$(RM) *~ $(OBJ)
+
+oclean:
+	$(RM) $(OBJ)
+
+fclean: oclean clean
+	$(RM) $(NAME)
