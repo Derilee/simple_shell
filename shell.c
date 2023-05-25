@@ -1,13 +1,8 @@
 #include "shell.h"
 /**
  * inputvalidator - validates input buffer
- * complete is bit flag type to complete.
- * 0 none, 1 single quote, 2 double quote, 4 logic,
- * fd is fd we used to get input the first time
  * @buf: buffer
- *
  * @fd: file descriptor
- *
  * Return: return value of command, 2 for syntax errors,
  * or negative numbers for syscall errors
  */
@@ -269,12 +264,10 @@ int scriptmode(char *av[])
 }
 
 /**
- * main - runs a shell
- *
+ * main - main method that runs the shell
  * @ac: number of args
  * @av: command line arg matrix
  * @environ: environment matrix
- *
  * Return: return value of last command
  */
 int main(int ac, char *av[], char **environ)

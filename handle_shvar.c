@@ -21,7 +21,7 @@ int initializevars(int ac, char **str)
 	special->variable = _strdup("?");
 	ptr = special + 1;
 	special->dest = ptr;
-	for(input = 0; str[input] != NULL; input++)
+	for (input = 0; str[input] != NULL; input++)
 	{
 		nums[0] = input + '0';
 		ptr->value = _strdup(str[input]);
