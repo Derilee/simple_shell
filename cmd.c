@@ -1,24 +1,24 @@
 #include "shell.h"
 
 /**
- * checkpath - checks the path
- * @av: arguments
- * Return: 1
+ * chpath - function that checks the path
+ * @av: arguments passed
+ * Return: 127 on success, -1 on failure
  */
-int checkpath(char *av[])
+int chpath(char *av[])
 {
-	char *path, *pathptr, *pathvar, *ptr, *pathenv = "PATH", *linect;
+	char *path, *pathptr, *var, *ptr, *pathenv = "PATH", *cline;
 	int pathlen, cmdlen;
 
 	for (ptr = av[0], cmdlen = 0; *ptr != 0; ptr++)
 		cmdlen++;
-	pathvar = fetchenv(pathenv);
-	if (pathvar != pathenv)
+	var = fetchenv(pathenv);
+	if (var != pathenv)
 	{
-		pathenv = pathvar;
-		while (*pathvar != 0)
+		pathenv = var;
+		while (*var != 0)
 		{
-			for (pathlen = 0, ptr = pathvar; *ptr != 0 && *ptr != ':'; ptr++)
+			for (pathlen = 0, ptr = var; *ptr != 0 && *ptr != ':'; ptr++)
 				pathlen++;
 			path = malloc(sizeof(char) * (cmdlen + pathlen + 2));
 			if (path == NULL)
@@ -27,8 +27,8 @@ int checkpath(char *av[])
 				return (-1);
 			}
 			pathptr = path;
-			while (*pathvar != ':' && *pathvar != 0)
-				*pathptr++ = *pathvar++;
+			while (*var != ':' && *var != 0)
+				*pathptr++ = *var++;
 			if (pathptr != path)
 				*pathptr++ = '/';
 			ptr = av[0];
@@ -43,16 +43,16 @@ int checkpath(char *av[])
 				return (pathlen);
 			}
 			free(path);
-			if (*pathvar == ':')
-				pathvar++;
+			if (*var == ':')
+				var++;
 		}
 	}
-	linect = itos(linecount(0));
+	cline = itos(linecount(0));
 	path = getsvar("0");
-	fprintstrs(2, path, ": ", linect, ": ", av[0], ": not found\n", NULL);
+	fprintstrs(2, path, ": ", cline, ": ", av[0], ": not found\n", NULL);
 	free(path);
-	free(linect);
-	if (pathenv != pathvar)
+	free(cline);
+	if (pathenv != var)
 		free(pathenv);
 	return (127);
 }
@@ -159,7 +159,7 @@ int builtincall(char *av[])
 	else if (av[0][0] != '/' &&
 		 !(av[0][0] == '.' && (av[0][1] == '/' ||
 				       (av[0][1] == '.' && av[0][2] == '/'))))
-		retval = checkpath(av);
+		retval = chpath(av);
 	else
 		retval = cmdcall(av, av[0]);
 	if (retval % 256 == 0)

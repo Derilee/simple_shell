@@ -107,7 +107,7 @@ int aliascmd(char *av[]);
 
 
 /*cmd and path handler */
-int checkpath(char *av[]);
+int chpath(char *av[]);
 int builtincall(char *av[]);
 int cmdcall(char *av[], char *path);
 int help(char *cmd);
