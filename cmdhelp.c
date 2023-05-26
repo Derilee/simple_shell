@@ -1,23 +1,70 @@
 #include "shell.h"
 /**
+ * runcmd - function that calls and runs cmd commands
+ * @argv: arguments passed
+ * @cmd: command passed
+ * Return: called cmd command
+ */
+int runcmd(char *argv[], char *cmd)
+{
+	pid_t input;
+	char *cline, *var;
+	int cprocess;
+	char **environ = fetchallenv();
+	
+	if (environ == NULL)
+		return (-1);
+
+	input = fork();
+	if (input == 0)
+	{
+		if (execve(cmd, argv, *(fetchenviron())) == -1)
+		{
+			if (!access(cmd, F_OK))
+			{
+				printerr(NULL);
+				exit(126);
+			}
+			else
+			{
+				cline = itos(linecount(0));
+				var = getsvar("0");
+				printfstr(2, var, ": ", cline, ": ", cmd, ": not found\n", NULL);
+				free(var);
+				free(cline);
+				exit(127);
+			}
+			exit(1);
+		}
+	}
+	else
+	{
+		wait(&cprocess);
+	}
+	free(environ);
+	return (cprocess);
+}
+
+/**
  * chpath - function that checks the path
  * @av: arguments passed
  * Return: 127 on success, -1 on failure
  */
 int chpath(char *argv[])
 {
-	int clen, plen;
-	char *path, *pathenv = "PATH", *ptr, *var, *cline, *pathptr;
+	int clen = 0, plen;
+	char *pathenv = "PATH", *var = fetchenv(pathenv);
+	char *ptr, *cline, *path, *pathptr;
 
-	for (ptr = argv[0], clen = 0; *ptr != 0; ptr++)
+	for (ptr = argv[0]; *ptr != 0; ptr++)
 		clen++;
-	var = fetchenv(pathenv);
 	if (var != pathenv)
 	{
 		pathenv = var;
 		while (*var != 0)
 		{
-			for (plen = 0, ptr = var; *ptr != 0 && *ptr != ':'; ptr++)
+			plen = 0;
+			for (ptr = var; *ptr != 0 && *ptr != ':'; ptr++)
 				plen++;
 			path = malloc(sizeof(char) * (clen + plen + 2));
 			if (path == NULL)
@@ -55,50 +102,7 @@ int chpath(char *argv[])
 		free(pathenv);
 	return (127);
 }
-/**
- * runcmd - function that calls and runs cmd commands
- * @argv: arguments passed
- * @cmd: command passed
- * Return: called cmd command
- */
-int runcmd(char *argv[], char *cmd)
-{
-	pid_t input;
-	char *cline, *var;
-	int cprocess;
 
-	environ = fetchallenv();
-	if (environ == NULL)
-		return (-1);
-	input = fork();
-	if (input == 0)
-	{
-		if (execve(cmd, argv, *(fetchenviron())) == -1)
-		{
-			if (!access(cmd, F_OK))
-			{
-				printerr(NULL);
-				exit(126);
-			}
-			else
-			{
-				cline = itos(linecount(0));
-				var = getsvar("0");
-				printfstr(2, var, ": ", cline, ": ", cmd, ": not found\n", NULL);
-				free(var);
-				free(cline);
-				exit(127);
-			}
-			exit(1);
-		}
-	}
-	else
-	{
-		wait(&cprocess);
-	}
-	free(environ);
-	return (cprocess);
-}
 /**
  * invokecmd - invokes cmd and calls builtin commands
  * @argv: arguments passed
@@ -113,20 +117,19 @@ int invokecmd(char *argv[])
 		return (0);
 	if (!_strcmp(argv[0], "exit"))
 	{
-		if (argv[1] != NULL)
-			if (argv[1][0] >= '0' && argv[1][0] <= '9')
-			{
-				val = convertStrToInt(argv[1]);
-				exitcleanup(argv);
-				exitshellstate();
-				exit(val);
-			}
-			else
-			{
-				printerr(": exit: Illegal number: ");
-				printfstr(STDERR_FILENO, argv[1], "\n", NULL);
-				val = 2;
-			}
+		if (argv[1] != NULL && argv[1][0] >= '0' && argv[1][0] <= '9')
+		{
+			val = convertStrToInt(argv[1]);
+			exitcleanup(argv);
+			exitshellstate();
+			exit(val);
+		}
+		else if (argv[1] != NULL)
+		{
+			printerr(": exit: Invalid command: ");
+			printfstr(STDERR_FILENO, argv[1], "\n", NULL);
+			val = 2;
+		}
 		else
 		{
 			str = getsvar("?");
@@ -139,8 +142,6 @@ int invokecmd(char *argv[])
 	}
 	else if (!_strcmp(argv[0], "cd"))
 		val = _cd(argv);
-	else if (!_strcmp(argv[0], "history"))
-		val = printshellstate();
 	else if (!_strcmp(argv[0], "help"))
 		val = processcmd(argv[1]);
 	else if (!_strcmp(argv[0], "env"))
@@ -151,18 +152,23 @@ int invokecmd(char *argv[])
 		val = _unsetenv(argv[1]);
 	else if (!_strcmp(argv[0], "alias"))
 		val = aliasmgt(argv);
-	else if (!_strcmp(argv[0], "unset"))
-		val = unsetsvar(argv[1]);
 	else if (!_strcmp(argv[0], "unalias"))
 		val = clearalias(argv[1]);
+	else if (!_strcmp(argv[0], "history"))
+		val = printshellstate();
 	else if (argv[0][0] != '/' &&
 		 !(argv[0][0] == '.' && (argv[0][1] == '/' ||
-				       (argv[0][1] == '.' && argv[0][2] == '/'))))
+		(argv[0][1] == '.' && argv[0][2] == '/'))))
+	{
 		val = chpath(argv);
+	}
 	else
+	{
 		val = runcmd(argv, argv[0]);
+	}
 	if (val % 256 == 0)
 		val /= 256;
+
 	str = itos(val % 128);
 	setsvar("?", str);
 	free(str);
@@ -176,8 +182,26 @@ int invokecmd(char *argv[])
  */
 int processcmd(char *cmd)
 {
-	char *file, *str;
+	struct Cmdlist
+	{
+		char *file;
+		char *cmdinfo;
+	} helpCommands[] = {
+		{"cd", "cmdHelp"},
+		{"history", "historyHelp"},
+		{"help", "help"},
+		{"unset", "unsetHelp"},
+		{"alias", "aliasHelp"},
+		{"unalias", "unaliasHelp"},
+		{"env", "envHelp"},
+		{"setenv", "setenvHelp"},
+		{"unsetenv", "help_unenv"}
+	};
+
+	char *str;
 	int fd, rev;
+	int inputcmd = sizeof(helpCommands) / sizeof(helpCommands[0]);
+	int input;
 
 	if (cmd == NULL)
 	{
@@ -186,183 +210,29 @@ int processcmd(char *cmd)
 		rev = write(1, str, rev);
 		return (0);
 	}
-
-	if (!_strcmp(cmd, "cd"))
+	for (input = 0; input < inputcmd; input++)
 	{
-		file = "cmd.help";
-		fd = open(file, O_RDWR);
-		str = malloc(256);
-		if (str == NULL)
-			return (-1);
-		while ((rev = read(fd, str, 256)) > 0)
+		if (!_strcmp(cmd, helpCommands[input].cmdinfo))
 		{
-			rev = write(1, str, rev);
-			if  (rev == -1)
-			{
+			fd = open(helpCommands[input].file, O_RDWR);
+			str = malloc(256);
+			if (str == NULL)
 				return (-1);
-			}
-		}
-		free(str);
-		fd = close(fd);
-		return (0);
-	}
-	else if (!_strcmp(cmd, "history"))
-	{
-		file = "history.help";
-		fd = open(file, O_RDWR);
-		str = malloc(256);
-		if (str == NULL)
-			return (-1);
-		while ((rev = read(fd, str, 256)) > 0)
-		{
-			rev = write(1, str, rev);
-			if  (rev == -1)
+			while ((rev = read(fd, str, 256)) > 0)
 			{
-				return (-1);
+				rev = write(1, str, rev);
+				if (rev == -1)
+				{
+					return (-1);
+				}
 			}
+			free(str);
+			fd = close(fd);
+			return (0);
 		}
-		free(str);
-		fd = close(fd);
-		return (0);
 	}
-	else if (!_strcmp(cmd, "help"))
-	{
-		file = "help";
-		fd = open(file, O_RDWR);
-		str = malloc(256);
-		if (str == NULL)
-			return (-1);
-		while ((rev = read(fd, str, 256)) > 0)
-		{
-			rev = write(1, str, rev);
-			if  (rev == -1)
-			{
-				return (-1);
-			}
-		}
-		free(str);
-		fd = close(fd);
-		return (0);
-	}
-	else if (!_strcmp(cmd, "unset"))
-	{
-		file = "unset.help";
-		fd = open(file, O_RDWR);
-		str = malloc(256);
-		if (str == NULL)
-			return (-1);
-		while ((rev = read(fd, str, 256)) > 0)
-		{
-			rev = write(1, str, rev);
-			if  (rev == -1)
-			{
-				return (-1);
-			}
-		}
-		free(str);
-		fd = close(fd);
-		return (0);
-	}
-	else if (!_strcmp(cmd, "alias"))
-	{
-		file = "alias.help";
-		fd = open(file, O_RDWR);
-		str = malloc(256);
-		if (str == NULL)
-			return (-1);
-		while ((rev = read(fd, str, 256)) > 0)
-		{
-			rev = write(1, str, rev);
-			if  (rev == -1)
-			{
-				return (-1);
-			}
-		}
-		free(str);
-		fd = close(fd);
-		return (0);
-	}
-	else if (!_strcmp(cmd, "unalias"))
-	{
-		file = "unalias.help";
-		fd = open(file, O_RDWR);
-		str = malloc(256);
-		if (str == NULL)
-			return (-1);
-		while ((rev = read(fd, str, 256)) > 0)
-		{
-			rev = write(1, str, rev);
-			if  (rev == -1)
-			{
-				return (-1);
-			}
-		}
-		free(str);
-		fd = close(fd);
-		return (0);
-	}
-	else if (!_strcmp(cmd, "env"))
-	{
-		file = "env.help";
-		fd = open(file, O_RDWR);
-		str = malloc(256);
-		if (str == NULL)
-			return (-1);
-		while ((rev = read(fd, str, 256)) > 0)
-		{
-			rev = write(1, str, rev);
-			if  (rev == -1)
-			{
-				return (-1);
-			}
-		}
-		free(str);
-		fd = close(fd);
-		return (0);
-	}
-	else if (!_strcmp(cmd, "setenv"))
-	{
-		file = "setenv.help";
-		fd = open(file, O_RDWR);
-		str = malloc(256);
-		if (str == NULL)
-			return (-1);
-		while ((rev = read(fd, str, 256)) > 0)
-		{
-			rev = write(1, str, rev);
-			if  (rev == -1)
-			{
-				return (-1);
-			}
-		}
-		free(str);
-		fd = close(fd);
-		return (0);
-	}
-	else if (!_strcmp(cmd, "unsetenv"))
-	{
-		file = "help_unenv";
-		fd = open(file, O_RDWR);
-		str = malloc(256);
-		if (str == NULL)
-			return (-1);
-		while ((rev = read(fd, str, 256)) > 0)
-		{
-			rev = write(1, str, rev);
-			if  (rev == -1)
-			{
-				return (-1);
-			}
-		}
-		free(str);
-		fd = close(fd);
-		return (0);
-	}
-	else
-	{
-		str = "help: no help topics match.\n";
-		rev = _strlen(str);
-		rev = write(1, str, rev);
-		return (0);
-	}
+	str = "help: no help topics match.\n";
+	rev = _strlen(str);
+	rev = write(1, str, rev);
+	return (0);
 }
