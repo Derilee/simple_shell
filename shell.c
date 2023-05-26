@@ -158,7 +158,7 @@ int inputvalidator(char **buf, int fd)
 	{
 		bufgl = NULL;
 		if (isatty(fd))
-			fprintstrs(1, ">", NULL);
+			printfstr(1, ">", NULL);
 		lenr = _getline(&bufgl, fd);
 		if (lenr == 0 && !isatty(fd))
 		{
@@ -202,13 +202,13 @@ int shintmode(void)
 			{
 			if (gethostname(hostname, sizeof(hostname)) == 0)
 			{
-				fprintstrs(1, "root@", hostname, ":", pwd, "$ ", NULL);
+				printfstr(1, "root@", hostname, ":", pwd, "$ ", NULL);
 				free(pwd);
 			}
 			}
 			else
 			{
-				fprintstrs(1, "root@", hostname, "$", NULL);
+				printfstr(1, "root@", hostname, "$", NULL);
 			}
 		}
 		lenr = _getline(&bufgl, STDIN_FILENO);
@@ -240,7 +240,7 @@ int scriptmode(char *av[])
 	infile = open(av[1], O_RDONLY);
 	if (infile == -1)
 	{
-		fprintstrs(STDERR_FILENO, av[0], ": 0: Can't open ",
+		printfstr(STDERR_FILENO, av[0], ": 0: Can't open ",
 			   av[1], "\n", NULL);
 		return (127);
 	}

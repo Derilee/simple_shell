@@ -78,11 +78,11 @@ int printerr(char *str)
 	numstr = itos(linecount(0));
 	if (str != NULL)
 	{
-		fprintstrs(2, pathname, ": ", numstr, str, NULL);
+		printfstr(2, pathname, ": ", numstr, str, NULL);
 	}
 	else
 	{
-		fprintstrs(2, pathname, ": ", numstr, ": ", NULL);
+		printfstr(2, pathname, ": ", numstr, ": ", NULL);
 		perror(NULL);
 	}
 	free(pathname);
@@ -91,13 +91,13 @@ int printerr(char *str)
 }
 
 /**
- * fprintstrs - simple string printer, va args should have a NULL last arg
+ * printfstr - print string
  * @fd: file descriptor
  * @str: string
  * Return: 0
  */
 
-int fprintstrs(int fd, char *str, ...)
+int printfstr(int fd, char *str, ...)
 {
 	va_list list;
 

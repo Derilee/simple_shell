@@ -49,7 +49,7 @@ int chpath(char *av[])
 	}
 	cline = itos(linecount(0));
 	path = getsvar("0");
-	fprintstrs(2, path, ": ", cline, ": ", av[0], ": not found\n", NULL);
+	printfstr(2, path, ": ", cline, ": ", av[0], ": not found\n", NULL);
 	free(path);
 	free(cline);
 	if (pathenv != var)
@@ -85,7 +85,7 @@ int cmdcall(char *av[], char *cmd)
 			{
 				linect = itos(linecount(0));
 				dolz = getsvar("0");
-				fprintstrs(2, dolz, ": ", linect, ": ", cmd, ": not found\n", NULL);
+				printfstr(2, dolz, ": ", linect, ": ", cmd, ": not found\n", NULL);
 				free(dolz);
 				free(linect);
 				exit(127);
@@ -125,7 +125,7 @@ int builtincall(char *av[])
 			else
 			{
 				printerr(": exit: Illegal number: ");
-				fprintstrs(STDERR_FILENO, av[1], "\n", NULL);
+				printfstr(STDERR_FILENO, av[1], "\n", NULL);
 				retval = 2;
 			}
 		else

@@ -123,7 +123,7 @@ int aliasmgt(char *argv[])
 	{
 		do
 		{
-			fprintstrs(1, ptr->name, "='", ptr->value, "'\n", NULL);
+			printfstr(1, ptr->name, "='", ptr->value, "'\n", NULL);
 			ptr = ptr->dest;
 		} while (ptr != NULL);
 		return (0);
@@ -156,12 +156,12 @@ int aliasmgt(char *argv[])
 
 			if (!_strcmp(val, name))
 			{
-				fprintstrs(1, "alias: ", name, " not found\n", NULL);
+				printfstr(1, "alias: ", name, " not found\n", NULL);
 				free(val);
 			}
 			else
 			{
-				fprintstrs(1, name, "='", val, "'\n", NULL);
+				printfstr(1, name, "='", val, "'\n", NULL);
 				free(val);
 			}
 		}

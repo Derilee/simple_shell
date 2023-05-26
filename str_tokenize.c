@@ -249,12 +249,12 @@ int _cd(char *av[])
 		free(oldpwd);
 		_setenv("PWD", newpath);
 		if (printpath)
-			fprintstrs(1, newpath, "\n", NULL);
+			printfstr(1, newpath, "\n", NULL);
 		free(newpath);
 		return (0);
 	}
 	printerr(": cd: can't cd to ");
-	fprintstrs(STDERR_FILENO, av[1], "\n", NULL);
+	printfstr(STDERR_FILENO, av[1], "\n", NULL);
 	free(oldpwd);
 	free(newpath);
 	return (ret);

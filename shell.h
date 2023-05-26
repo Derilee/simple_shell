@@ -26,7 +26,7 @@ char *_strdup(char *str);
 int convertStrToInt(char *str);
 char *itos(int digits);
 char *_strchr(char *s, char c);
-int fprintstrs(int fd, char *str, ...);
+int printfstr(int fd, char *str, ...);
 int printerr(char *);
 int linecount(int);
 
