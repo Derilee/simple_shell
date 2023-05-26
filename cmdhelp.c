@@ -11,7 +11,7 @@ int runcmd(char *argv[], char *cmd)
 	char *cline, *var;
 	int cprocess;
 	char **environ = fetchallenv();
-	
+
 	if (environ == NULL)
 		return (-1);
 

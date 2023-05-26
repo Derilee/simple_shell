@@ -122,16 +122,14 @@ int aliasmgt(char *argv[])
 
 	if (argv[1] == NULL)
 	{
-		do
-		{
+		do {
 			printfstr(1, ptr->name, "='", ptr->value, "'\n", NULL);
 			ptr = ptr->dest;
 		} while (ptr != NULL);
 		return (0);
 	}
 
-	do
-	{
+	do {
 		name = strtok(argv[input], "=");
 		val = strtok(NULL, "=");
 
