@@ -5,8 +5,6 @@ NAME = hsh
 RM = rm -f
 CFLAGS = -Wall -Werror -Wextra -pedantic -std=gnu89
 
-.PHONY: all clean oclean fclean
-
 all: $(NAME)
 
 $(NAME): $(OBJ)
