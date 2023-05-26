@@ -104,7 +104,7 @@ char *subsvars(char **buf)
 		val = fetchenv(name);
 		if (val == name)
 		{
-			val = getsvar(name);
+			val = fetchvar(name);
 			if (val == name)
 				val = _strdup("");
 		}

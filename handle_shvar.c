@@ -1,21 +1,21 @@
 #include "shell.h"
 /**
  * initializevars - function to initialize variables
- * @ac: arguemnts intiger
- * @av: string arguments
+ * @argc: arguemnts counter
  * Return: 0 if successful
  */
-int initializevars(int ac, char **str)
+int initializevars(int argc, char **str)
 {
 	PowerShell **root = fetchvariable();
-	PowerShell *special;
-	PowerShell *ptr;
+	PowerShell *special, *ptr;
 	int input = 0;
 	char nums[2] = {0, 0};
 
 	*root = malloc(sizeof(PowerShell) * 15);
 	if (*root == NULL)
+	{
 		return (-1);
+	}
 	special = *root;
 	special->value = _strdup("0");
 	special->variable = _strdup("?");
@@ -43,16 +43,16 @@ int initializevars(int ac, char **str)
 	ptr->dest = ptr + 1;
 	ptr = ptr->dest;
 	ptr->variable = _strdup("#");
-	ptr->value = itos(ac);
+	ptr->value = itos(argc);
 	ptr->dest = NULL;
 	return (0);
 }
 /**
- * getsvar - gets shell variable
- * @name: name of the shell var
- * Return: original argument if not found
+ * fetchvar - function that fetches shell variable
+ * @name: variable name
+ * Return: collected variable
  */
-char *getsvar(char *name)
+char *fetchvar(char *name)
 {
 	PowerShell *variable = *(fetchvariable()), *value = *(fetchvalue());
 	PowerShell *ptr = variable;

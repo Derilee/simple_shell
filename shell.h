@@ -2,15 +2,13 @@
 #define SHELL_H
 
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <unistd.h>
 #include <sys/wait.h>
-#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <stdarg.h>
-#include <dirent.h>
-
+#include <fcntl.h>
 
 extern char **environ;
 
@@ -111,6 +109,7 @@ int runcmd(char *argv[], char *cmd);
 int invokecmd(char *argv[]);
 int processcmd(char *cmd);
 
+/* parse and arg handler */
 char *parsesetsvar(char *buf);
 int parseargs(char **buf);
 char *subsvars(char **buf);
@@ -126,7 +125,7 @@ int main(int ac, char *av[], char **environ);
 
 /* handle shell veriables */
 int initializevars(int ac, char **str);
-char *getsvar(char *name);
+char *fetchvar(char *name);
 int setsvar(char *name, char *val);
 int unsetsvar(char *name);
 

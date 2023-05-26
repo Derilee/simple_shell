@@ -74,7 +74,7 @@ int printerr(char *str)
 {
 	char *pathname, *numstr;
 
-	pathname = getsvar("0");
+	pathname = fetchvar("0");
 	numstr = itos(linecount(0));
 	if (str != NULL)
 	{

@@ -28,7 +28,7 @@ int runcmd(char *argv[], char *cmd)
 			else
 			{
 				cline = itos(linecount(0));
-				var = getsvar("0");
+				var = fetchvar("0");
 				printfstr(2, var, ": ", cline, ": ", cmd, ": not found\n", NULL);
 				free(var);
 				free(cline);
@@ -94,7 +94,7 @@ int chpath(char *argv[])
 		}
 	}
 	cline = itos(linecount(0));
-	path = getsvar("0");
+	path = fetchvar("0");
 	printfstr(2, path, ": ", cline, ": ", argv[0], ": not found \n", NULL);
 	free(path);
 	free(cline);
@@ -132,7 +132,7 @@ int invokecmd(char *argv[])
 		}
 		else
 		{
-			str = getsvar("?");
+			str = fetchvar("?");
 			val = convertStrToInt(str);
 			free(str);
 			exitcleanup(argv);
