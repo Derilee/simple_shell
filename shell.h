@@ -102,15 +102,14 @@ typedef struct alias
 alias **fetchall();
 char *fetchalias(char *name);
 int printalias(char *name, char *val);
-int unsetalias(char *name);
+int clearalias(char *name);
 int aliasmgt(char *argv[]);
 
 /*cmd and path handler */
-int chpath(char *av[]);
-int builtincall(char *av[]);
-int cmdcall(char *av[], char *path);
-int help(char *cmd);
-
+int chpath(char *argv[]);
+int runcmd(char *argv[], char *cmd);
+int invokecmd(char *argv[]);
+int processcmd(char *cmd);
 
 char *parsesetsvar(char *buf);
 int parseargs(char **buf);

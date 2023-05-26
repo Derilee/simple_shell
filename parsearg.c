@@ -428,7 +428,7 @@ int parseargs(char **buf)
 	av[ac] = NULL;
 	free(*buf);
 	*buf = NULL;
-	ret = builtincall(av);
+	ret = invokecmd(av);
 	for (ac = 0; av[ac] != NULL; ac++)
 		free(av[ac]);
 	return (ret);

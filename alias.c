@@ -77,25 +77,26 @@ int printalias(char *name, char *val)
 	return (0);
 }
 /**
- * unsetalias - unset alias of name variable
+ * clearalias - function that clear alias of name variable
  * @name: name of the alias
  * Return: 0 if sucessful
  */
-int unsetalias(char *name)
+int clearalias(char *name)
 {
-	alias *alist = *(fetchall());
-	alias *ptr = alist, *next;
+	alias *list = *(fetchall());
+	alias *ptr = list, *next;
 
-	if (alist == NULL)
+	if (list == NULL)
+	{
 		return (0);
+	}
 	if (!(_strcmp(ptr->name, name)))
 	{
-		alist = alist->dest;
+		list = list->dest;
 		free(ptr->value);
 		free(ptr);
 		return (0);
 	}
-
 	while (ptr->dest != NULL && _strcmp(ptr->dest->name, name))
 		ptr = ptr->dest;
 	if (!_strcmp(ptr->dest->name, name))
