@@ -12,7 +12,8 @@ char *processasgnvar(char *temp)
 
 	do {
 		input = 0;
-		for (ptr = temp; *ptr; ptr++)
+		ptr = temp;
+		while (*ptr != '\0')
 		{
 			if (*ptr == '=')
 			{
@@ -41,8 +42,9 @@ char *processasgnvar(char *temp)
 				free(tmpstg);
 				return (NULL);
 			}
+			ptr++;
 		}
-	} while (input && *ptr != 0);
+	} while (input && *ptr != '\0');
 	newstr = malloc(sizeof(char) * (_strlen(temp) + 1));
 	if (newstr == NULL)
 		return (NULL);
