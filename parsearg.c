@@ -21,7 +21,7 @@ char *parsesetsvar(char *buf)
 				haseq = 1;
 				name = strtok(name, "=");
 				val = strtok(NULL, "");
-				setsvar(name, val);
+				asgnvar(name, val);
 				if (buf == NULL)
 				{
 					free(bufstart);

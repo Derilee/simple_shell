@@ -170,13 +170,13 @@ int invokecmd(char *argv[])
 		val /= 256;
 
 	str = itos(val % 128);
-	setsvar("?", str);
+	asgnvar("?", str);
 	free(str);
 	return (val);
 }
 
 /**
- * processcmd - helps in processing builtin command
+ * processcmd - helps in processing builtin commands
  * @cmd: the command line inserted
  * Return: 0 if sucess
  */

@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 
+
 extern char **environ;
 
 
@@ -39,7 +40,7 @@ int _setenv(char *variable, char *value);
 int _unsetenv(char *variable);
 
 
-/* handles the powershell*/
+/* handles the powershell and shell variables*/
 /**
  * struct PowerShell - Struct PowerShell to list node
  * @variable: name of the variable
@@ -56,6 +57,10 @@ typedef struct PowerShell
 PowerShell **fetchvariable(void);
 PowerShell **fetchvalue(void);
 
+int initializevars(int ac, char **str);
+char *fetchvar(char *name);
+int asgnvar(char *name, char *val);
+int revokevar(char *name);
 
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 int _getline(char **lineptr, int fd);
@@ -103,11 +108,13 @@ int printalias(char *name, char *val);
 int clearalias(char *name);
 int aliasmgt(char *argv[]);
 
+
 /*cmd and path handler */
 int chpath(char *argv[]);
 int runcmd(char *argv[], char *cmd);
 int invokecmd(char *argv[]);
 int processcmd(char *cmd);
+
 
 /* parse and arg handler */
 char *parsesetsvar(char *buf);
@@ -116,18 +123,13 @@ char *subsvars(char **buf);
 char *cleanarg(char *arg);
 char *tildeexpand(char *buf);
 
+
 /*main header with needed fucntions*/
 int inputvalidator(char **buf, int fd);
 int shintmode(void);
 int scriptmode(char *av[]);
 int main(int ac, char *av[], char **environ);
 
-
-/* handle shell veriables */
-int initializevars(int ac, char **str);
-char *fetchvar(char *name);
-int setsvar(char *name, char *val);
-int unsetsvar(char *name);
 
 /*tokenization of string */
 char *strtok(char *str, char *delim);

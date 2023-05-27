@@ -29,42 +29,42 @@ int inputvalidator(char **buf, int fd)
 			{
 				free(*buf);
 				printerr(": Syntax error \";;\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 			if (*bufptr == ';')
 			{
 				free(*buf);
 				printerr(": Syntax error \";\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 			if (*bufptr == '&' && *(bufptr + 1) == '&')
 			{
 				free(*buf);
 				printerr(": Syntax error \"&&\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 			if (*bufptr == '&')
 			{
 				free(*buf);
 				printerr(": Syntax error \"&\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 			if (*bufptr == '|' && *(bufptr + 1) == '|')
 			{
 				free(*buf);
 				printerr(": syntax error \"||\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 			if (*bufptr == '|')
 			{
 				free(*buf);
 				printerr(": syntax error \"|\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 			start = 0;
@@ -107,14 +107,14 @@ int inputvalidator(char **buf, int fd)
 			{
 				free(*buf);
 				printerr(": syntax error \"|\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 			else if (bufptr[1] == ';')
 			{
 				free(*buf);
 				printerr(": syntax error \";\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 		}
@@ -130,14 +130,14 @@ int inputvalidator(char **buf, int fd)
 			{
 				free(*buf);
 				printerr(": syntax error \";\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 			else if (bufptr[1] == '&')
 			{
 				free(*buf);
 				printerr(": syntax error \"&\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 		}
@@ -147,7 +147,7 @@ int inputvalidator(char **buf, int fd)
 			{
 				free(*buf);
 				printerr(": Syntax error \";;\" unexpected\n");
-				setsvar("0", "2");
+				asgnvar("0", "2");
 				return (2);
 			}
 			start = 1;
@@ -278,7 +278,7 @@ int main(int ac, char *av[], char **environ)
 
 	initializevars(ac - 1, av);
 	pidptr = _getpid();
-	setsvar("$", pidptr);
+	asgnvar("$", pidptr);
 	free(pidptr);
 	_getline(NULL, -2);
 

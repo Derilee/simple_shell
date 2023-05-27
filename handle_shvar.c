@@ -77,12 +77,12 @@ char *fetchvar(char *name)
 	return (_strdup(ptr->value));
 }
 /**
- * setsvar - sets shell var
- * @name: name of var
- * @val: value of var
- * Return: int
+ * asgnvar - assign the power shell variable
+ * @name: variable name
+ * @val: variable value
+ * Return: 0 if successful
  */
-int setsvar(char *name, char *val)
+int asgnvar(char *name, char *val)
 {
 	PowerShell **vars = fetchvalue();
 	PowerShell *special = *(fetchvariable());
@@ -130,11 +130,11 @@ int setsvar(char *name, char *val)
 	return (0);
 }
 /**
- * unsetsvar - unset shell var
- * @name: name of var to unset
- * Return: int
+ * revokevar - revoke the power shell variable
+ * @name: variable name to be revoked
+ * Return: 0, if succesful
  */
-int unsetsvar(char *name)
+int revokevar(char *name)
 {
 	PowerShell *vars = *fetchvalue();
 	PowerShell *ptr = vars, *next;
