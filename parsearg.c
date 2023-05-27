@@ -18,12 +18,12 @@ char *processasgnvar(char *temp)
 		{
 			if (*ptr == '=')
 			{
-				name = strtok(temp, " ");
-				temp = strtok(NULL, "");
+				name = strtokenize(temp, " ");
+				temp = strtokenize(NULL, "");
 				ptr = temp;
 				input = 1;
-				name = strtok(name, "=");
-				val = strtok(NULL, "");
+				name = strtokenize(name, "=");
+				val = strtokenize(NULL, "");
 				asgnvar(name, val);
 				if (temp == NULL)
 				{

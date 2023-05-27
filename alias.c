@@ -130,8 +130,8 @@ int aliasmgt(char *argv[])
 	}
 
 	do {
-		name = strtok(argv[input], "=");
-		val = strtok(NULL, "=");
+		name = strtokenize(argv[input], "=");
+		val = strtokenize(NULL, "=");
 
 		if (val != NULL)
 		{

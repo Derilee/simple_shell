@@ -164,10 +164,10 @@ char *_getpid(void)
 
 	while (_getline(&s, fd))
 	{
-		name = strtok(s, ":");
+		name = strtokenize(s, ":");
 		if (!_strcmp(name, "Pid"))
 		{
-			pid = _strdup(strtok(NULL, "\n \t"));
+			pid = _strdup(strtokenize(NULL, "\n \t"));
 			free(s);
 			return (pid);
 		}

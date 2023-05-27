@@ -26,86 +26,47 @@ char *_strncpy(char *dest, char *src, int n)
 }
 
 /**
- * strtok - tokenizes a string
+ * strtokenize - tokenizes a string
  * @str: string to tokenize
- *
  * @delim: delimiters used to create tokens
- *
- * Return: token
+ * Return: tokenized string
  */
-char *strtok(char *str, char *delim)
+char *strtokenize(char *str, char *delim)
 {
-	static char *saved_string;
-	int i;
-	int j;
-	char *tmp_str;
-	char *tmp_delim;
+	static char *stdstr;
+	char *tokstr = stdstr;
+	char *input = delim;
 
-	if (str == 0)
-		str = saved_string;
-	if (str == 0)
-		return (0);
+	if (str != NULL)
+		stdstr = str;
+	if (stdstr == NULL || *stdstr == '\0')
+		return (NULL);
 
-	tmp_str = str;
-	tmp_delim = delim;
-	i = 0;
-	while (tmp_str[i] != 0)
+	while (*stdstr != '\0')
 	{
-		j = 0;
-		while (delim[j] != 0)
+		while (*input != '\0')
 		{
-			if (tmp_str[i] == tmp_delim[j])
-				break;
-			j++;
+			if (*stdstr == *input)
+			{
+				*stdstr = '\0';
+				stdstr++;
+				return (tokstr);
+			}
+			input++;
 		}
-		if (tmp_delim[j] == 0)
-			break;
-		i++;
+	stdstr++;
 	}
-	str = str + i;
-	if (*str == 0)
-	{
-		saved_string = str;
-		return (0);
-	}
-	tmp_str = tmp_str + i;
-
-	i = 0;
-	while (tmp_str[i] != 0)
-	{
-		j = 0;
-		while (tmp_delim[j] != 0)
-		{
-			if (tmp_str[i] == tmp_delim[j])
-				break;
-			j++;
-		}
-		if (tmp_delim[j] != 0)
-			break;
-		i++;
-	}
-	saved_string = tmp_str;
-	if (tmp_str[i] != 0)
-	{
-		saved_string = (saved_string + i + 1);
-		tmp_str[i] = '\0';
-	}
-	else
-	{
-		saved_string = '\0';
-	}
-	return (tmp_str);
+	return (tokstr);
 }
 /**
  * strtokqe - string token with quotes and escapes
- * @str: string
+ * @str: string token to be quoted
  * @delim: delimiters
  * @escflags: escape flags
  * flags are bitwise.
  * 1 = use \ to escape delims
  * 2 = single quote skips
  * 4 = double quote skips
- *
  * Return: string
  */
 char *strtokqe(char *str, char *delim, int escflags)
@@ -244,7 +205,7 @@ int _cd(char *av[])
 		while (*pathbit)
 			*newptr++ = *pathbit++;
 	*newptr++ = '/';
-	pathbit = strtok(av[1], "/");
+	pathbit = strtokenize(av[1], "/");
 	while (pathbit != NULL)
 	{
 		if (pathbit[0] == '.' && pathbit[1] == '.'
@@ -263,7 +224,7 @@ int _cd(char *av[])
 				*newptr++ = *pathbit++;
 			*newptr++ = '/';
 		}
-		pathbit = strtok(NULL, "/");
+		pathbit = strtokenize(NULL, "/");
 	}
 	if (newptr != newpath && newptr != newpath + 1)
 		newptr--;

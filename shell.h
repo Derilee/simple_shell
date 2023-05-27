@@ -135,7 +135,7 @@ int shellbatch(char *argv[]);
 
 
 /*tokenization of string */
-char *strtok(char *str, char *delim);
+char *strtokenize(char *str, char *delim);
 char *strtokqe(char *str, char *delim, int escflags);
 int _cd(char *av[]);
 void exitcleanup(char **av);
