@@ -10,7 +10,7 @@ int inputchecker(char **temp, int fd)
 	char *newstr, *input, *ptr = *temp;
 	ssize_t total;
 	size_t len;
-	int complete = 0;
+	int comp = 0;
 
 	linecount(1);
 	if (*ptr == 0)
@@ -18,13 +18,13 @@ int inputchecker(char **temp, int fd)
 
 	while (*ptr)
 	{
-		while ((*ptr == ' ' || *ptr == '\n') && !(complete & 3))
+		while ((*ptr == ' ' || *ptr == '\n') && !(comp & 3))
 			ptr++;
 
 		if (*ptr == 0)
 			break;
 
-		if (complete & 7)
+		if (comp & 7)
 		{
 			input = NULL;
 			if (isatty(fd))
@@ -54,4 +54,51 @@ int inputchecker(char **temp, int fd)
 		return (transargs(temp));
 	}
 	return (0);
+}
+
+/**
+ * terminal - function that handles terminal mode ui
+ * Return: result
+ */
+int terminal(void)
+{
+	char *str = NULL, *pwd;
+	ssize_t len = 0, endofline = 0, result = 0;
+	int istty = isatty(0) && isatty(1);
+	char hostname[256];
+
+	while (!endofline)
+	{
+		if (istty)
+		{
+			pwd = fetchenv("PWD");
+			if (pwd != NULL)
+			{
+			if (gethostname(hostname, sizeof(hostname)) == 0)
+			{
+				printfstr(1, "root@", hostname, ":", pwd, "$ ", NULL);
+				free(pwd);
+			}
+			}
+			else
+			{
+				printfstr(1, "root@", hostname, "$ ", NULL);
+			}
+		}
+		len = _getline(&str, STDIN_FILENO);
+		if (len == 0 || len == -1)
+		{
+			free(str);
+			break;
+		}
+		if (str[len -1] != '\n')
+			endofline = 1;
+
+		result = inputchecker(&str, STDIN_FILENO);
+		str = NULL;
+
+		if (endofline)
+			break;
+	}
+	return (result);
 }

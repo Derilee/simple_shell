@@ -1,49 +1,5 @@
 #include "shell.h"
 /**
- * shintmode - shell interactive mode
- * Return: 0
- */
-int shintmode(void)
-{
-	char *bufgl = NULL, *pwd;
-	ssize_t lenr = 0, eofflag = 0, ret = 0;
-	int istty = isatty(0) && isatty(1);
-	char hostname[256];
-
-	while (!eofflag)
-	{
-		if (istty)
-		{
-			pwd = fetchenv("PWD");
-			if (pwd != NULL)
-			{
-			if (gethostname(hostname, sizeof(hostname)) == 0)
-			{
-				printfstr(1, "root@", hostname, ":", pwd, "$ ", NULL);
-				free(pwd);
-			}
-			}
-			else
-			{
-				printfstr(1, "root@", hostname, "$", NULL);
-			}
-		}
-		lenr = _getline(&bufgl, STDIN_FILENO);
-		if (lenr == 0 || lenr == -1)
-		{
-			free(bufgl);
-			break;
-		}
-		if (bufgl[lenr - 1] != '\n')
-			eofflag = 1;
-		ret = inputchecker(&bufgl, STDIN_FILENO);
-		bufgl = NULL;
-		if (eofflag)
-			break;
-	}
-	return (ret);
-}
-/**
  * scriptmode - shell script mode
  * @av: arguments
  * Return: 0 upon success or -1 if failure
@@ -103,7 +59,7 @@ int main(int ac, char *av[], char **environ)
 	if (ac > 1)
 		ret = scriptmode(av);
 	else
-		ret = shintmode();
+		ret = terminal();
 	exitcleanup(NULL);
 	exitshellstate();
 	return (ret);

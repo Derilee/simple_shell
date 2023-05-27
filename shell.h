@@ -126,7 +126,7 @@ int transargs(char **buf);
 
 /*main header with needed fucntions*/
 int inputchecker(char **temp, int fd);
-int shintmode(void);
+int terminal(void);
 int scriptmode(char *av[]);
 int main(int ac, char *av[], char **environ);
 
