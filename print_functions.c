@@ -1,30 +1,25 @@
 #include "shell.h"
-#include <stdarg.h>
 /**
- * linecount - count lines
- *
- * @increment: icnrementer
- *
- * Return: count
+ * linecount - function that count lines
+ * @increment: int increment
+ * Return: counted lines
  */
 int linecount(int increment)
 {
 	static int count;
 
 	count = count + increment;
-
 	return (count);
 }
+
 /**
  * itos - converts integer to string
- *
- * @digits: int
- *
+ * @digits: number entered
  * Return: a string
  */
 char *itos(int digits)
 {
-	int count, i, neg, absMod, digitTest;
+	int count, index, neg, conv, digitTest;
 	char *output;
 
 	digitTest = digits;
@@ -53,23 +48,21 @@ char *itos(int digits)
 	if (neg)
 		output[0] = '-';
 	digitTest = digits;
-	for (i = count - 1; i >= 0 + neg; i--)
+	for (index = count - 1; index >= 0 + neg; index--)
 	{
-		absMod = digitTest % 10;
-		output[i] = (absMod < 0 ? -absMod : absMod) + '0';
+		conv = digitTest % 10;
+		output[index] = (conv < 0 ? -conv : conv) + '0';
 		digitTest /= 10;
 	}
 	output[count] = '\0';
 	return (output);
-
 }
-/**
- * printerr - printerrors
- * @str: string
- * null prints errno error with perror, otherwise print string as error
- * Return: 0
- */
 
+/**
+ * printerr - function that print errors
+ * @str: string
+ * Return: 0, if successful
+ */
 int printerr(char *str)
 {
 	char *pathname, *numstr;
@@ -93,10 +86,9 @@ int printerr(char *str)
 /**
  * printfstr - print string
  * @fd: file descriptor
- * @str: string
- * Return: 0
+ * @str: string entered
+ * Return: 0, if successful
  */
-
 int printfstr(int fd, char *str, ...)
 {
 	va_list list;
@@ -115,32 +107,28 @@ int printfstr(int fd, char *str, ...)
 }
 
 /**
- * _strchr - locates a character in a string
- * @s: char pointer
- * @c: char
- * _strchr: locates character in a string and returns a pointer
- * to the first occurence of c in the string s
- * Return: address of first occurence of c in s
+ * _strchr - function that locates a character in a string
+ * @str: char pointer
+ * @ch: char
+ * Return: a pointer address of first occurence of c in s
  */
-
-char *_strchr(char *s, char c)
+char *_strchr(char *str, char ch)
 {
-	int i;
-	int len;
+	int input, len;
 
-	i = 0;
-	while (s[i] != '\0')
+	input = 0;
+	while (str[input] != '\0')
 	{
 		len++;
-		i++;
+		input++;
 	}
 
-	i = 0;
-	while (i <= len)
+	input = 0;
+	while (input <= len)
 	{
-		if (s[i] == c)
-			return (s + i);
-		i++;
+		if (str[input] == ch)
+			return (str + input);
+		input++;
 	}
 	return (0);
 }
