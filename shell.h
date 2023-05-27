@@ -119,11 +119,10 @@ int processcmd(char *cmd);
 
 /* parse and arg handler */
 char *processasgnvar(char *temp);
-int parseargs(char **buf);
-char *subsvars(char **buf);
-char *cleanarg(char *arg);
-char *tildeexpand(char *buf);
-
+char *replacevars(char **temp);
+char *filterarg(char *argc);
+char *handlxpand(char *temp);
+int transargs(char **buf);
 
 /*main header with needed fucntions*/
 int inputvalidator(char **buf, int fd);

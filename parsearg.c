@@ -124,303 +124,310 @@ char *replacevars(char **temp)
 	return (*temp);
 }
 
-
 /**
- * cleanarg - cleans arguments and functional quotes
- * @arg: - argument to clean
- * Return: cleaned argument
+ * filterarg - function that filters argument
+ * @argc: - argument to filer
+ * Return: filtered argument on success
  */
-char *cleanarg(char *arg)
+char *filterarg(char *argc)
 {
-	char *newbuf, *ptr, *ptr2;
+	char *newstr, *ptr, *strptr;
+	int input = 0;
 	size_t len = 0;
-	int inquote = 0;
 
-	ptr = arg;
-	while (*ptr != 0)
+	for (ptr = argc; *ptr; ptr++)
 	{
-		if (*ptr == '\\' && !inquote)
+		if (*ptr == '\\' && !input)
 		{
 			ptr++;
-			if (*ptr != 0)
+			if (*ptr)
 			{
 				len++;
-				ptr++;
 			}
 			continue;
 		}
-		if (*ptr == '\\' && inquote == 2)
+		if (*ptr == '\\' && input == 2)
 		{
 			ptr++;
 			if (*ptr == '$' || *ptr == '#' || *ptr == ';' || *ptr == '\\')
 			{
 				len++;
-				ptr++;
 			}
 			else
 				len++;
 			continue;
 		}
-		if (!inquote && *ptr == '"')
+		if (!input && *ptr == '"')
 		{
-			inquote = 2;
-			ptr++;
+			input = 2;
 			continue;
 		}
-		if (!inquote && *ptr == '\'')
+		if (!input && *ptr == '\'')
 		{
-			inquote = 1;
-			ptr++;
+			input = 1;
 			continue;
 		}
-		if ((inquote == 1 && *ptr == '\'') || (inquote == 2 && *ptr == '"'))
+		if ((input == 1 && *ptr == '\'') || (input == 2 && *ptr == '"'))
 		{
-			inquote = 0;
-			ptr++;
+			input = 0;
 			continue;
 		}
-		if (*ptr == 0)
-			break;
-		ptr++;
 		len++;
 	}
-	newbuf = malloc(sizeof(char) * (len + 1));
-	if (newbuf == NULL)
+	newstr = malloc(len + 1);
+	if (!newstr)
 		return (NULL);
-	ptr = arg;
-	ptr2 = newbuf;
-	inquote = 0;
-	while (*ptr != 0)
+
+	strptr = newstr;
+	input = 0;
+	for (ptr = argc; *ptr; ptr++)
 	{
-		if (*ptr == '\\' && !inquote)
+		if (*ptr == '\\' && !input)
 		{
 			ptr++;
-			if (*ptr != 0)
-				*ptr2++ = *ptr++;
+			if (*ptr)
+				*strptr++ = *ptr;
 			continue;
 		}
-		if (*ptr == '\\' && inquote == 2)
+		if (*ptr == '\\' && input == 2)
 		{
 			ptr++;
 			if (*ptr == '$' || *ptr == '#' || *ptr == ';' || *ptr == '\\')
-				*ptr2++ = *ptr++;
+				*strptr++ = *ptr;
 			else
-				*ptr2++ = '\\';
+				*strptr++ = '\\';
 			continue;
 		}
-		if (!inquote && *ptr == '"')
+		if (!input && *ptr == '"')
 		{
-			inquote = 2;
-			ptr++;
+			input = 2;
 			continue;
 		}
-		if (!inquote && *ptr == '\'')
+		if (!input && *ptr == '\'')
 		{
-			inquote = 1;
-			ptr++;
+			input = 1;
 			continue;
 		}
-		if ((inquote == 1 && *ptr == '\'') || (inquote == 2 && *ptr == '"'))
+		if ((input == 1 && *ptr == '\'') || (input == 2 && *ptr == '"'))
 		{
-			inquote = 0;
-			ptr++;
+			input = 0;
 			continue;
 		}
-		if (*ptr != 0)
-			*ptr2++ = *ptr++;
+			*strptr++ = *ptr;
 	}
-	*ptr2 = 0;
-	free(arg);
-	return (newbuf);
+	*strptr = '\0';
+	free(argc);
+	return (newstr);
 }
 
 /**
- * tildeexpand - handle expanding ~ where appropriate
+ * handlxpand - handle expanding ~ where appropriate
  * @buf: buffer to process
  * Return: processed buffer
  */
-char *tildeexpand(char *buf)
+char *handlxpand(char *temp)
 {
-	char *tildeptr = buf, *endptr, *homepath, *newbuf, *bufptr, *newptr;
-	int inquotes = 0;
+	char *ptr = temp, *strend, *home;
+	char *newstr, *bufptr, *newptr;
+	int input = 0;
 
-	while (*tildeptr != 0)
+	while (*ptr)
 	{
-		tildeptr = buf;
-		while (*tildeptr != '~' && *tildeptr != 0)
+		ptr = temp;
+		while (*ptr && *ptr != '~')
 		{
-			if (*tildeptr == '\\')
+			if (*ptr == '\\')
 			{
-				tildeptr++;
-				if (*tildeptr != 0)
-					tildeptr++;
+				ptr += 2;
 				continue;
 			}
-			if (inquotes != 1 && *tildeptr == '"')
+			if (input != 1 && *ptr == '"')
 			{
-				inquotes = 2;
-				while (*tildeptr != '"' && *tildeptr != 0)
+				input = 2;
+				while (*ptr && *ptr != '"')
 				{
-					if (*tildeptr == '\\')
+					if (*ptr == '\\')
 					{
-						tildeptr++;
-						inquotes = *tildeptr != 0 && tildeptr++;
-						inquotes = 2;
+						ptr += 2;
 						continue;
 					}
-					tildeptr++;
+					ptr++;
 				}
 			}
-			if (*tildeptr == '\'' && inquotes != 2)
+			if (*ptr == '\'' && input != 2)
 			{
-				tildeptr++;
-				while (*tildeptr != '\'' && *tildeptr != 0)
-					tildeptr++;
+				ptr++;
+				while (*ptr && *ptr != '\'')
+					ptr++;
 			}
-			tildeptr++;
+			ptr++;
 		}
-		if (*tildeptr == 0)
-			return (buf);
-		endptr = tildeptr;
-		while (*endptr != '/' && *endptr != ' ' && *endptr != 0)
-			endptr++;
-		homepath = fetchenv("HOME");
-		if (homepath == NULL)
+		if (!*ptr)
+			return (temp);
+		strend = ptr;
+		while (*strend && *strend != '/' && *strend != ' ')
+			strend++;
+		home = fetchenv("HOME");
+		if (!home)
 			return (NULL);
-		newbuf = malloc(_strlen(buf) - (size_t) endptr +
-				(size_t) tildeptr + _strlen(homepath) + 1);
-		if (newbuf == NULL)
+		newstr = malloc(_strlen(temp) - (size_t)(strend - ptr)
+				+ _strlen(home) + 1);
+		if (!newstr)
 		{
-			free(homepath);
+			free(home);
 			return (NULL);
 		}
-		bufptr = buf;
-		newptr = newbuf;
-		while (bufptr < tildeptr)
+		bufptr = temp;
+		newptr = newstr;
+		while (bufptr < ptr)
 			*newptr++ = *bufptr++;
-		bufptr = homepath;
+		bufptr = home;
 		while (*bufptr)
 			*newptr++ = *bufptr++;
-		while (*endptr)
-			*newptr++ = *endptr++;
-		*newptr = 0;
-		free(homepath);
-		free(buf);
-		buf = newbuf;
+		while (*strend)
+			*newptr++ = *strend++;
+		*newptr = '\0';
+		free(home);
+		free(temp);
+		temp = newstr;
 	}
-	return (newbuf);
+	return (newstr);
 }
-/**
- * parseargs - parse arguments function
- * @buf: buffer pointer
- * Return: return value of command and frees buffer
- */
-int parseargs(char **buf)
-{
-	char *av[1024], *ptr, *left, *right;
-	int ac, ret = 0, newchk;
 
-	if (*buf == NULL || **buf == 0)
-		return (0);
-	ptr = *buf;
-	newchk = _strlen(*buf) - 1;
-	if (ptr[newchk] == '\n')
-		ptr[newchk] = 0;
-	if (*buf[0] == 0)
+/**
+ * transargs - translates arguments function
+ * @temp: temporary storage
+ * Return: translated string
+ */
+int transargs(char **temp)
+{
+	char *argv[1024], *ptr, *input, *output;
+	int argc, str = 0, newstr;
+
+	if (!(*temp) || !(*temp)[0])
+	return (0);
+	ptr = *temp;
+	newstr = _strlen(*temp) - 1;
+
+	if (ptr[newstr] == '\n')
+		ptr[newstr] = 0;
+
+	if ((*temp)[0] == 0)
 	{
-		free(*buf);
+		free(*temp);
 		return (0);
 	}
-	left = _strdup(strtokqe(*buf, ";", 7));
-	right = _strdup(strtokqe(NULL, "", 7));
-	free(*buf);
-	*buf = left;
-	if (right != NULL && *right != 0)
+
+	input = _strdup(strtokqe(*temp, ";", 7));
+	output = _strdup(strtokqe(NULL, "", 7));
+	free(*temp);
+	*temp = input;
+
+	if (output && *output)
 	{
-		parseargs(&left);
-		return (parseargs(&right));
+		transargs(&input);
+		return (transargs(&output));
 	}
-	left = strtokqe(*buf, "&", 7);
-	right = strtokqe(NULL, "", 7);
-	if (right != NULL && *right == '&')
+
+	input = strtokqe(*temp, "&", 7);
+	output = strtokqe(NULL, "", 7);
+
+	if (output && *output == '&')
 	{
-		left = _strdup(left);
-		right = _strdup(right);
-		free(*buf);
-		*buf = left;
-		ret = parseargs(&left);
-		*buf = right;
-		right++;
-		right = _strdup(right);
-		free(*buf);
-		if (ret == 0)
-			return (parseargs(&right));
-		*buf = right;
-		strtokqe(right, "|", 7);
-		right = strtokqe(NULL, "", 7);
-		if (right != NULL)
+		input = _strdup(input);
+		output = _strdup(output);
+		free(*temp);
+		*temp = input;
+		str = transargs(&input);
+		*temp = output;
+		output++;
+		output = _strdup(output);
+		free(*temp);
+
+		if (str == 0)
+			return (transargs(&output));
+
+		*temp = output;
+		strtokqe(output, "|", 7);
+		output = strtokqe(NULL, "", 7);
+
+		if (output)
 		{
-			right++;
-			right = _strdup(right);
-			free(*buf);
-			return (parseargs(&right));
+			output++;
+			output = _strdup(output);
+			free(*temp);
+			return (transargs(&output));
 		}
-		free(*buf);
-		return (ret);
+
+		free(*temp);
+		return (str);
 	}
-	else if (right != NULL)
+	else if (output)
 	{
-		*(right - 1) = '&';
+		*(output - 1) = '&';
 	}
-	left = strtokqe(*buf, "|", 7);
-	right = strtokqe(NULL, "", 7);
-	if (right != NULL && *right == '|')
+
+	input = strtokqe(*temp, "|", 7);
+	output = strtokqe(NULL, "", 7);
+
+	if (output && *output == '|')
 	{
-		left = _strdup(left);
-		right = _strdup(right);
-		free(*buf);
-		*buf = left;
-		ret = parseargs(&left);
-		*buf = right;
-		right++;
-		right = _strdup(right);
-		free(*buf);
-		if (ret != 0)
-			return (parseargs(&right));
-		free(right);
-		return (ret);
+		input = _strdup(input);
+		output = _strdup(output);
+		free(*temp);
+		*temp = input;
+		str = transargs(&input);
+		*temp = output;
+		output++;
+		output = _strdup(output);
+		free(*temp);
+
+		if (str != 0)
+			return (transargs(&output));
+
+		free(output);
+		return (str);
 	}
-	else if (right != NULL)
+	else if (output)
 	{
-		*(right - 1) = '|';
+		*(output - 1) = '|';
 	}
-	*buf = replacevars(buf);
-	if (*buf == NULL)
+
+	*temp = replacevars(temp);
+	if (!(*temp))
 		return (-1);
-	*buf = tildeexpand(*buf);
-	if (*buf == NULL)
+
+	*temp = handlxpand(*temp);
+	if (!(*temp))
 		return (-1);
-	*buf = processasgnvar(*buf);
-	if (*buf == NULL)
+
+	*temp = processasgnvar(*temp);
+	if (!(*temp))
 		return (0);
-	ac = 0;
-	av[ac++] = _strdup(strtokqe(*buf, "\n ", 7));
-	av[0] = fetchalias(av[0]);
-	if (av[0] != NULL)
-		av[0] = cleanarg(av[0]);
-	while (av[ac - 1] != NULL)
+
+	argc = 0;
+	argv[argc++] = _strdup(strtokqe(*temp, "\n ", 7));
+	argv[0] = fetchalias(argv[0]);
+
+	if (argv[0])
+		argv[0] = filterarg(argv[0]);
+
+	while (argv[argc - 1])
 	{
-		av[ac] = _strdup(strtokqe(NULL, "\n ", 7));
-		if (av[ac] != NULL)
-			av[ac] = cleanarg(av[ac]);
-		ac++;
+		argv[argc] = _strdup(strtokqe(NULL, "\n ", 7));
+		if (argv[argc])
+			argv[argc] = filterarg(argv[argc]);
+		argc++;
 	}
-	ac--;
-	av[ac] = NULL;
-	free(*buf);
-	*buf = NULL;
-	ret = invokecmd(av);
-	for (ac = 0; av[ac] != NULL; ac++)
-		free(av[ac]);
-	return (ret);
+
+	argc--;
+	argv[argc] = NULL;
+	free(*temp);
+	*temp = NULL;
+	str = invokecmd(argv);
+
+	for (argc = 0; argv[argc]; argc++)
+		free(argv[argc]);
+
+	return (str);
 }

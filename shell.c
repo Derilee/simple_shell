@@ -179,7 +179,7 @@ int inputvalidator(char **buf, int fd)
 		return (inputvalidator(&newbuf, fd));
 	}
 	setshellstate(*buf);
-	return (parseargs(buf));
+	return (transargs(buf));
 }
 
 /**
