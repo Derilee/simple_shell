@@ -14,6 +14,10 @@
 extern char **environ;
 
 
+/* main header */
+int main(int argc, char *argv[], char **environ);
+
+
 /* handle string and print string */
 int _putchar(char c);
 void _printstr(char *str);
@@ -124,11 +128,10 @@ char *filterarg(char *argc);
 char *handlxpand(char *temp);
 int transargs(char **buf);
 
-/*main header with needed fucntions*/
+/*shell ui handler*/
 int inputchecker(char **temp, int fd);
 int terminal(void);
-int scriptmode(char *av[]);
-int main(int ac, char *av[], char **environ);
+int shellbatch(char *argv[]);
 
 
 /*tokenization of string */

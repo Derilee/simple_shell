@@ -1,66 +1,139 @@
 #include "shell.h"
 /**
- * scriptmode - shell script mode
- * @av: arguments
- * Return: 0 upon success or -1 if failure
+ * inputchecker - checks input characters
+ * @temp: temporary storage to store char
+ * @fd: file descriptor
+ * Return: 0 if successful
  */
-int scriptmode(char *av[])
+int inputchecker(char **temp, int fd)
 {
-	char *bufgl = NULL;
-	int infile;
-	ssize_t lenr = 0, eofflag = 0, ret = 0;
+	char *newstr, *input, *ptr = *temp;
+	ssize_t total;
+	size_t len;
+	int comp = 0;
 
-	infile = open(av[1], O_RDONLY);
-	if (infile == -1)
+	linecount(1);
+	if (*ptr == 0)
+		return (0);
+
+	while (*ptr)
 	{
-		printfstr(STDERR_FILENO, av[0], ": 0: Can't open ",
-			   av[1], "\n", NULL);
-		return (127);
-	}
-	while (!eofflag)
-	{
-		lenr = _getline(&bufgl, infile);
-		if (lenr == 0 || lenr == -1)
+		while ((*ptr == ' ' || *ptr == '\n') && !(comp & 3))
+			ptr++;
+
+		if (*ptr == 0)
+			break;
+
+		if (comp & 7)
 		{
-			free(bufgl);
-			break;
+			input = NULL;
+			if (isatty(fd))
+				printfstr(1, ">", NULL);
+
+			total = _getline(&input, fd);
+			if (total == 0 && !isatty(fd))
+			{
+				free(*temp);
+				free(input);
+				printerr(": Syntax error: unterminated quoted string\n");
+				return (-1);
+			}
+			if (total == -1)
+			{
+
+			}
+			len = _strlen(*temp);
+			newstr = malloc(len + total + 1);
+			_strcpy(newstr, *temp);
+			_strcpy(newstr + len, input);
+			free(*temp);
+			free(input);
+			return (inputchecker(&newstr, fd));
 		}
-		if (bufgl[lenr - 1] != '\n')
-			eofflag = 1;
-		ret = inputchecker(&bufgl, STDIN_FILENO);
-		bufgl = NULL;
-		if (eofflag)
-			break;
+		setshellstate(*temp);
+		return (transargs(temp));
 	}
-	close(infile);
-	return (ret);
+	return (0);
 }
 
 /**
- * main - main method that runs the shell
- * @ac: number of args
- * @av: command line arg matrix
- * @environ: environment matrix
- * Return: return value of last command
+ * terminal - function that handles terminal mode ui
+ * Return: result if successful
  */
-int main(int ac, char *av[], char **environ)
+int terminal(void)
 {
-	int ret = 0;
+	char *str = NULL, *pwd;
+	ssize_t len = 0, endofline = 0, result = 0;
+	int istty = isatty(0) && isatty(1);
+	char hostname[256];
 
-	char *pidptr;
+	while (!endofline)
+	{
+		if (istty)
+		{
+			pwd = fetchenv("PWD");
+			if (pwd != NULL)
+			{
+			if (gethostname(hostname, sizeof(hostname)) == 0)
+			{
+				printfstr(1, "root@", hostname, ":", pwd, "$ ", NULL);
+				free(pwd);
+			}
+			}
+			else
+			{
+				printfstr(1, "root@", hostname, "$ ", NULL);
+			}
+		}
+		len = _getline(&str, STDIN_FILENO);
+		if (len == 0 || len == -1)
+		{
+			free(str);
+			break;
+		}
+		if (str[len - 1] != '\n')
+			endofline = 1;
 
-	initializevars(ac - 1, av);
-	pidptr = _getpid();
-	asgnvar("$", pidptr);
-	free(pidptr);
-	_getline(NULL, -2);
+		result = inputchecker(&str, STDIN_FILENO);
+		str = NULL;
 
-	modallenv(environ, NULL);
-	if (ac > 1)
-		ret = scriptmode(av);
-	else
-		ret = terminal();
-	exitcleanup(NULL);
-	exitshellstate();
-	return (ret);
+		if (endofline)
+			break;
+	}
+	return (result);
+}
+
+/**
+ * shellbatch - handles shell batch command
+ * @argv: arguments counter
+ * Return: 0 upon success or -1 if failure
+ */
+int shellbatch(char *argv[])
+{
+	char *str = NULL;
+	int input;
+	ssize_t len = 0, endofline = 0, result = 0;
+
+	input = open(argv[1], O_RDONLY);
+	if (input == - 1)
+	{
+		printfstr(STDERR_FILENO, argv[0], ": 0: Can't open ",
+			   argv[1], "\n", NULL);
+		return (127);
+	}
+
+	while (!endofline && (len = _getline(&str, input)) > 0)
+	{
+		if (str[len - 1] != '\n')
+			endofline = 1;
+
+		result = inputchecker(&str, STDIN_FILENO);
+		free(str);
+		str = NULL;
+
+		if (endofline)
+			break;
+	}
+	close(input);
+	return (result);
 }
