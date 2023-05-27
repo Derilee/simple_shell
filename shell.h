@@ -125,7 +125,7 @@ char *handlxpand(char *temp);
 int transargs(char **buf);
 
 /*main header with needed fucntions*/
-int inputvalidator(char **buf, int fd);
+int inputchecker(char **temp, int fd);
 int shintmode(void);
 int scriptmode(char *av[]);
 int main(int ac, char *av[], char **environ);
