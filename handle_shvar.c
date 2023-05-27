@@ -159,6 +159,7 @@ int revokevar(char *name)
 			free(ptr->dest->value);
 			free(ptr->dest);
 			ptr->dest = next;
+			break;
 	}
 	}
 	return (0);

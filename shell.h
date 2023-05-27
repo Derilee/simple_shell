@@ -117,7 +117,7 @@ int processcmd(char *cmd);
 
 
 /* parse and arg handler */
-char *parsesetsvar(char *buf);
+char *processasgnvar(char *temp);
 int parseargs(char **buf);
 char *subsvars(char **buf);
 char *cleanarg(char *arg);

@@ -1,53 +1,54 @@
 #include "shell.h"
 /**
- * parsesetsvar - parse set shell vars
- * @buf: temporary storage
- * Return: new string
+ * processasgnvar - process assigned powershell variables
+ * @temp: temporary storage to store variable
+ * Return: processed new string
  */
-char *parsesetsvar(char *buf)
+char *processasgnvar(char *temp)
 {
-	int haseq;
-	char *ptr, *name, *val, *bufstart = buf, *newbuf;
+	int input;
+	char *name, *val, *ptr, *newstr;
+	char *tmpstg = temp;
 
 	do {
-		haseq = 0;
-		for (ptr = buf; *ptr; ptr++)
+		input = 0;
+		for (ptr = temp; *ptr; ptr++)
 		{
 			if (*ptr == '=')
 			{
-				name = strtok(buf, " ");
-				buf = strtok(NULL, "");
-				ptr = buf;
-				haseq = 1;
+				name = strtok(temp, " ");
+				temp = strtok(NULL, "");
+				ptr = temp;
+				input = 1;
 				name = strtok(name, "=");
 				val = strtok(NULL, "");
 				asgnvar(name, val);
-				if (buf == NULL)
+				if (temp == NULL)
 				{
-					free(bufstart);
+					free(tmpstg);
 					return (NULL);
 				}
 				continue;
 			}
 			if (*ptr == ' ' || *ptr == 0)
 			{
-				buf = _strdup(buf);
-				free(bufstart);
-				return (buf);
+				temp = _strdup(temp);
+				free(tmpstg);
+				return (temp);
 			}
 			if (ptr == NULL)
 			{
-				free(bufstart);
+				free(tmpstg);
 				return (NULL);
 			}
 		}
-	} while (haseq && *ptr != 0);
-	newbuf = malloc(sizeof(char) * (_strlen(buf) + 1));
-	if (newbuf == NULL)
+	} while (input && *ptr != 0);
+	newstr = malloc(sizeof(char) * (_strlen(temp) + 1));
+	if (newstr == NULL)
 		return (NULL);
-	newbuf = _strcpy(newbuf, buf);
-	free(bufstart);
-	return (newbuf);
+	newstr = _strcpy(newstr, temp);
+	free(tmpstg);
+	return (newstr);
 }
 
 /**
@@ -409,7 +410,7 @@ int parseargs(char **buf)
 	*buf = tildeexpand(*buf);
 	if (*buf == NULL)
 		return (-1);
-	*buf = parsesetsvar(*buf);
+	*buf = processasgnvar(*buf);
 	if (*buf == NULL)
 		return (0);
 	ac = 0;
