@@ -47,6 +47,7 @@ int initializevars(int argc, char **str)
 	ptr->dest = NULL;
 	return (0);
 }
+
 /**
  * fetchvar - function that fetches shell variable
  * @name: variable name
@@ -55,27 +56,25 @@ int initializevars(int argc, char **str)
 char *fetchvar(char *name)
 {
 	PowerShell *variable = *(fetchvariable()), *value = *(fetchvalue());
-	PowerShell *ptr = variable;
+	PowerShell *ptr;
 
-	while (ptr != NULL && _strcmp(ptr->variable, name))
+	for (ptr = variable; ptr != NULL; ptr = ptr->dest)
 	{
-		ptr = ptr->dest;
+		if (_strcmp(ptr->variable, name) == 0)
+		{
+			return _strdup(ptr->value);
+		}
 	}
-	if (ptr != NULL)
+	for (ptr = value; ptr != NULL; ptr = ptr->dest)
 	{
-		return (_strdup(ptr->value));
+		if (_strcmp(ptr->variable, name) == 0)
+		{
+			return _strdup(ptr->value);
+		}
 	}
-	ptr = value;
-	while (ptr != NULL && _strcmp(ptr->variable, name))
-	{
-		ptr = ptr->dest;
-	}
-	if (ptr == NULL)
-	{
-		return (name);
-	}
-	return (_strdup(ptr->value));
+	return _strdup(name);
 }
+
 /**
  * asgnvar - assign the power shell variable
  * @name: variable name
@@ -111,7 +110,9 @@ int asgnvar(char *name, char *val)
 		return (0);
 	}
 	while (_strcmp(ptr->variable, name) && ptr->dest != NULL)
+	{
 		ptr = ptr->dest;
+	}
 	if (ptr != NULL && !_strcmp(ptr->variable, name))
 	{
 		free(ptr->value);
@@ -149,15 +150,16 @@ int revokevar(char *name)
 		free(ptr);
 		return (0);
 	}
-	while (ptr->dest != NULL && _strcmp(ptr->dest->variable, name))
-		ptr = ptr->dest;
-	if (!_strcmp(ptr->dest->variable, name))
+	for (; ptr->dest != NULL; ptr = ptr->dest)
 	{
-		next = ptr->dest->dest;
-		free(ptr->dest->variable);
-		free(ptr->dest->value);
-		free(ptr->dest);
-		ptr->dest = next;
+		if (!_strcmp(ptr->dest->variable, name))
+		{
+			next = ptr->dest->dest;
+			free(ptr->dest->variable);
+			free(ptr->dest->value);
+			free(ptr->dest);
+			ptr->dest = next;
+	}
 	}
 	return (0);
 }
