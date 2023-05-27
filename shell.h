@@ -20,6 +20,7 @@ void _printstr(char *str);
 size_t _strlen(char *str);
 char *_strcat(char *dest, char *src);
 char *_strcpy(char *dest, char *src);
+char *_strncpy(char *dest, char *src, int n);
 int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
 int convertStrToInt(char *str);

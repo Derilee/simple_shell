@@ -1,8 +1,9 @@
 #include "shell.h"
 /**
  * processasgnvar - process assigned powershell variables
- * @temp: temporary storage to store variable
- * Return: processed new string
+ * @temp: temporary storage to store assigned variable
+ * Return: processed new string if succesful
+ *         or, NULL on failure
  */
 char *processasgnvar(char *temp)
 {
@@ -54,57 +55,42 @@ char *processasgnvar(char *temp)
 }
 
 /**
- * subsvars - function that substitutes shell vars
- * @buf: buffer string to be inputed
- * Return: processed buffer string
+ * replacevar - function that replaces shell variable
+ * @temp: temporary storage to store assigned variable
+ * Return: processed new string if succesful
  */
-char *subsvars(char **buf)
+char *replacevars(char **temp)
 {
-	char *varptr = *buf, *ptr, *name, *val, *valptr, *dest, *dolptr;
-	size_t buflen = _strlen(*buf);
-	size_t varvlen, varnlen, i;
-	int inquotes = 0;
+	char *var = *temp, *name, *val;
+	size_t len = _strlen(*temp);
+	size_t str;
+	char *ptr = *temp, *src;
 
-	while (*varptr != 0)
+	while (*var != 0)
 	{
-		while (*varptr != '$' && *varptr != 0)
+		while (*var != '$' && *var != 0)
 		{
-			if (*varptr == '\\')
-			{
-				varptr++;
-				if (*varptr != 0)
-					varptr++;
-				continue;
-			}
-			if (inquotes == 2 && *varptr == '"')
-				inquotes = 0;
-			if (inquotes == 0 && *varptr == '"')
-				inquotes = 2;
-			if (*varptr == '\'' && inquotes != 2)
-			{
-				varptr++;
-				while (*varptr != '\'' && *varptr != 0)
-					varptr++;
-			}
-			varptr++;
-			if (*varptr == '$' &&
-			    (varptr[1] == ' ' || varptr[1] == 0 || varptr[1] == '\n'))
-				varptr++;
+			var++;
 		}
-		dolptr = varptr;
-		if (*varptr == 0)
-			return (*buf);
-		varptr++;
-		for (ptr = varptr, varnlen = 0; *ptr != 0 && *ptr != ' '
-			     && *ptr != '\n' && *ptr != '\\'; ptr++)
-			varnlen++;
-		name = malloc(sizeof(char) * (varnlen + 1));
+		if (*var == 0)
+			return (*temp);
+		var++;
+
+		str = 0;
+		while (var[str] != 0 && var[str] != ' ' &&
+			var[str] != '\n' && var[str] != '\\')
+		{
+			str++;
+		}
+		name = malloc(str + 1);
 		if (name == NULL)
+		{
 			return (NULL);
-		for (i = 0; i < varnlen; i++, varptr++)
-			name[i] = *varptr;
-		name[i] = 0;
+		}
+		_strncpy(name, var, str);
+		name[str] = '\0';
 		val = fetchenv(name);
+
 		if (val == name)
 		{
 			val = fetchvar(name);
@@ -112,30 +98,32 @@ char *subsvars(char **buf)
 				val = _strdup("");
 		}
 		free(name);
-		varvlen = _strlen(val);
-		buflen = buflen - varnlen + varvlen + 1;
-		name = malloc(sizeof(char) * (buflen));
-		for (ptr = *buf, dest = name, valptr = val; *ptr != 0; ptr++, dest++)
+		len = len - str + _strlen(val) + 1;
+		name = malloc(len);
+		while (*ptr != 0)
 		{
-			if (val != NULL && ptr == dolptr)
+			if (val != NULL && ptr == var)
 			{
-				while (*valptr != 0)
-					*dest++ = *valptr++;
+				while (*val != 0)
+				{
+					*src++ = *val++;
+				}
 				free(val);
 				val = NULL;
-				varptr = dest;
-				ptr += varnlen + 1;
+				var = src;
+				ptr += str + 1;
 				if (*ptr == 0)
 					break;
 			}
-			*dest = *ptr;
+			*src++ = *ptr++;
 		}
-		*dest = *ptr;
-		free(*buf);
-		*buf = name;
+		*src = *ptr;
+		free(*temp);
+		*temp = name;
 	}
-	return (*buf);
+	return (*temp);
 }
+
 
 /**
  * cleanarg - cleans arguments and functional quotes
@@ -406,7 +394,7 @@ int parseargs(char **buf)
 	{
 		*(right - 1) = '|';
 	}
-	*buf = subsvars(buf);
+	*buf = replacevars(buf);
 	if (*buf == NULL)
 		return (-1);
 	*buf = tildeexpand(*buf);
