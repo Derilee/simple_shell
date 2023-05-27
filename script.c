@@ -55,5 +55,3 @@ int inputchecker(char **temp, int fd)
 	}
 	return (0);
 }
-
-

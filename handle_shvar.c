@@ -62,17 +62,17 @@ char *fetchvar(char *name)
 	{
 		if (_strcmp(ptr->variable, name) == 0)
 		{
-			return _strdup(ptr->value);
+			return (_strdup(ptr->value));
 		}
 	}
 	for (ptr = value; ptr != NULL; ptr = ptr->dest)
 	{
 		if (_strcmp(ptr->variable, name) == 0)
 		{
-			return _strdup(ptr->value);
+			return (_strdup(ptr->value));
 		}
 	}
-	return _strdup(name);
+	return (_strdup(name));
 }
 
 /**
