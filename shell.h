@@ -29,7 +29,7 @@ int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
 int convertStrToInt(char *str);
 char *itos(int digits);
-char *_strchr(char *s, char c);
+char *_strchr(char *str, char ch);
 int printfstr(int fd, char *str, ...);
 int printerr(char *);
 int linecount(int);
@@ -136,7 +136,7 @@ int shellbatch(char *argv[]);
 
 /*tokenization of string */
 char *strtokenize(char *str, char *delim);
-char *strtokqe(char *str, char *delim, int escflags);
+char *str_toks_quotes(char *str, char *delim, int esc);
 int _cd(char *av[]);
 void exitcleanup(char **av);
 

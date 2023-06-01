@@ -318,8 +318,8 @@ int transargs(char **temp)
 		return (0);
 	}
 
-	input = _strdup(strtokqe(*temp, ";", 7));
-	output = _strdup(strtokqe(NULL, "", 7));
+	input = _strdup(str_toks_quotes(*temp, ";", 7));
+	output = _strdup(str_toks_quotes(NULL, "", 7));
 	free(*temp);
 	*temp = input;
 
@@ -329,8 +329,8 @@ int transargs(char **temp)
 		return (transargs(&output));
 	}
 
-	input = strtokqe(*temp, "&", 7);
-	output = strtokqe(NULL, "", 7);
+	input = str_toks_quotes(*temp, "&", 7);
+	output = str_toks_quotes(NULL, "", 7);
 
 	if (output && *output == '&')
 	{
@@ -348,8 +348,8 @@ int transargs(char **temp)
 			return (transargs(&output));
 
 		*temp = output;
-		strtokqe(output, "|", 7);
-		output = strtokqe(NULL, "", 7);
+		str_toks_quotes(output, "|", 7);
+		output = str_toks_quotes(NULL, "", 7);
 
 		if (output)
 		{
@@ -367,8 +367,8 @@ int transargs(char **temp)
 		*(output - 1) = '&';
 	}
 
-	input = strtokqe(*temp, "|", 7);
-	output = strtokqe(NULL, "", 7);
+	input = str_toks_quotes(*temp, "|", 7);
+	output = str_toks_quotes(NULL, "", 7);
 
 	if (output && *output == '|')
 	{
@@ -406,7 +406,7 @@ int transargs(char **temp)
 		return (0);
 
 	argc = 0;
-	argv[argc++] = _strdup(strtokqe(*temp, "\n ", 7));
+	argv[argc++] = _strdup(str_toks_quotes(*temp, "\n ", 7));
 	argv[0] = fetchalias(argv[0]);
 
 	if (argv[0])
@@ -414,7 +414,7 @@ int transargs(char **temp)
 
 	while (argv[argc - 1])
 	{
-		argv[argc] = _strdup(strtokqe(NULL, "\n ", 7));
+		argv[argc] = _strdup(str_toks_quotes(NULL, "\n ", 7));
 		if (argv[argc])
 			argv[argc] = filterarg(argv[argc]);
 		argc++;
