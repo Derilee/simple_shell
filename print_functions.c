@@ -1,25 +1,30 @@
 #include "shell.h"
+#include <stdarg.h>
 /**
- * linecount - function that count lines
- * @increment: int increment
- * Return: counted lines
+ * linecount - count lines
+ *
+ * @increment: icnrementer
+ *
+ * Return: count
  */
 int linecount(int increment)
 {
 	static int count;
 
 	count = count + increment;
+
 	return (count);
 }
-
 /**
  * itos - converts integer to string
- * @digits: number entered
+ *
+ * @digits: int
+ *
  * Return: a string
  */
 char *itos(int digits)
 {
-	int count, index, neg, conv, digitTest;
+	int count, i, neg, absMod, digitTest;
 	char *output;
 
 	digitTest = digits;
@@ -48,21 +53,23 @@ char *itos(int digits)
 	if (neg)
 		output[0] = '-';
 	digitTest = digits;
-	for (index = count - 1; index >= 0 + neg; index--)
+	for (i = count - 1; i >= 0 + neg; i--)
 	{
-		conv = digitTest % 10;
-		output[index] = (conv < 0 ? -conv : conv) + '0';
+		absMod = digitTest % 10;
+		output[i] = (absMod < 0 ? -absMod : absMod) + '0';
 		digitTest /= 10;
 	}
 	output[count] = '\0';
 	return (output);
-}
 
+}
 /**
- * printerr - function that print errors
+ * printerr - printerrors
  * @str: string
- * Return: 0, if successful
+ * null prints errno error with perror, otherwise print string as error
+ * Return: 0
  */
+
 int printerr(char *str)
 {
 	char *pathname, *numstr;
@@ -86,9 +93,10 @@ int printerr(char *str)
 /**
  * printfstr - print string
  * @fd: file descriptor
- * @str: string entered
- * Return: 0, if successful
+ * @str: string
+ * Return: 0
  */
+
 int printfstr(int fd, char *str, ...)
 {
 	va_list list;
@@ -107,28 +115,32 @@ int printfstr(int fd, char *str, ...)
 }
 
 /**
- * _strchr - function that locates a character in a string
- * @str: char pointer
- * @ch: char
- * Return: a pointer address of first occurence of c in s
+ * _strchr - locates a character in a string
+ * @s: char pointer
+ * @c: char
+ * _strchr: locates character in a string and returns a pointer
+ * to the first occurence of c in the string s
+ * Return: address of first occurence of c in s
  */
-char *_strchr(char *str, char ch)
-{
-	int input, len;
 
-	input = 0;
-	while (str[input] != '\0')
+char *_strchr(char *s, char c)
+{
+	int i;
+	int len;
+
+	i = 0;
+	while (s[i] != '\0')
 	{
 		len++;
-		input++;
+		i++;
 	}
 
-	input = 0;
-	while (input <= len)
+	i = 0;
+	while (i <= len)
 	{
-		if (str[input] == ch)
-			return (str + input);
-		input++;
+		if (s[i] == c)
+			return (s + i);
+		i++;
 	}
 	return (0);
 }

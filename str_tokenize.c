@@ -59,74 +59,111 @@ char *strtokenize(char *str, char *delim)
 	return (tokstr);
 }
 /**
- * strtoksquotes - string token with quotes and escapes
+ * strtokqe - string token with quotes and escapes
  * @str: string token to be quoted
  * @delim: delimiters
  * @escflags: escape flags
- * Return: quoted string
- * Description:flags are bitwise.
+ * flags are bitwise.
  * 1 = use \ to escape delims
  * 2 = single quote skips
  * 4 = double quote skips
+ * Return: string
  */
-char *str_toks_quotes(char *str, char *delim, int esc)
+char *strtokqe(char *str, char *delim, int escflags)
 {
-	static char *stdstr;
-	int input, toks;
+	static char *saved_string;
+	int i;
+	int j;
 
-	if (!str)
-		str = stdstr;
-	if (!str)
-		return (NULL);
+	if (str == 0)
+		str = saved_string;
+	if (str == 0)
+		return (0);
 
-	input = 0;
-	while (str[input] && !_strchr(delim, str[input]))
-		input++;
-
-	str += input;
-	if (*str == '\0')
+	i = 0;
+	while (str[i] != 0)
 	{
-		stdstr = str;
-		return (NULL);
-	}
-	input = 0;
-	while (str[input])
-	{
-		if (str[input] == '\\' && esc & 1)
-			input += (str[input + 1] != '\0') ? 2 : 1;
-		else if (str[input] == '\'' && esc & 2)
+		j = 0;
+		while (delim[j] != 0)
 		{
-			input++;
-			while (str[input] && str[input] != '\'')
-				input += (str[input] == '\\' && esc & 1) ? 2 : 1;
-		}
-		else if (str[input] == '"' && esc & 4)
-		{
-			input++;
-			while (str[input] && str[input] != '"')
-				input += (str[input] == '\\' && esc & 1) ? 2 : 1;
-		}
-		else
-		{
-			toks = 0;
-			while (delim[toks] && delim[toks] != str[input])
-				toks++;
-			if (delim[toks])
+			if (str[i] == delim[j])
 				break;
-			input++;
+			j++;
 		}
+		if (delim[j] == 0)
+			break;
+		i++;
 	}
-	stdstr = str;
-	if (str[input])
+	str = str + i;
+	if (*str == 0)
 	{
-		stdstr = (stdstr + input + 1);
-		str[input] = '\0';
+		saved_string = str;
+		return (0);
+	}
+
+	i = 0;
+	while (str[i] != 0)
+	{
+		if (str[i] == '\\' && escflags & 1)
+		{
+			if (str[i + 1] != 0)
+				i++;
+			i++;
+			continue;
+		}
+		if (str[i] == '\'' && escflags & 2)
+		{
+			i++;
+			while (str[i] != '\'')
+			{
+				if (str[i] == '\\' && escflags & 1)
+				{
+					if (str[i + 1] != 0)
+						i++;
+					i++;
+					continue;
+				}
+				i++;
+			}
+		}
+		if (str[i] == '"' && escflags & 4)
+		{
+			i++;
+			while (str[i] != '"')
+			{
+				if (str[i] == '\\' && escflags & 1)
+				{
+					if (str[i + 1] != 0)
+						i++;
+					i++;
+					continue;
+				}
+				i++;
+			}
+		}
+		j = 0;
+		while (delim[j] != 0)
+		{
+			if (str[i] == delim[j])
+				break;
+			j++;
+		}
+		if (delim[j] != 0)
+			break;
+		i++;
+	}
+	saved_string = str;
+	if (str[i] != 0)
+	{
+		saved_string = (saved_string + i + 1);
+		str[i] = '\0';
 	}
 	else
-		stdstr = NULL;
+	{
+		saved_string = '\0';
+	}
 	return (str);
 }
-
 
 /**
  *_cd - change directory builtin
