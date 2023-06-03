@@ -21,7 +21,7 @@ Task 1. Simple shell 0.1(100% done): Write a UNIX command line interpreter. <br>
 Task 2. Simple shell 0.2(100% done): Handle command lines with arguments. <br>
 Task 3. Simple shell 0.3(100% done): Handle the PATH. Fork must not be called if the command doesn’t exist. <br>
 Task 4. Simple shell 0.4(100% done): Implement the exit built-in, that exits the shell
-Usage: exit. You don’t have to handle any argument to the built-in exit
+Usage: exit. You don’t have to handle any argument to the built-in exit. <br>
 Task 5. Simple shell 1.0(100% done): Implement the env built-in, that prints the current environment. 
 Task 6. Simple shell 0.1.1(100% done): Write your own getline function
                             Use a buffer to read many chars at once and call the least possible the read system call
