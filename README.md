@@ -1,181 +1,115 @@
-0x16. C - Simple Shell
+# 0x16. C - Simple Shell
 
-A project by Samuel Victor.
+<p align="center">
+ <img src= "https://s3.eu-west-3.amazonaws.com/hbtn.intranet.project.files/holbertonschool-low_level_programming/235/shell.jpeg" width="400" height="400" />
 
-                        TASKS
-1. Simple shell 0.1
-Write a UNIX command line interpreter.
+# Simple Shell :robot:
 
-Usage: simple_shell
-Your Shell should:
-Display a prompt and wait for the user to type a command. A command line always ends with a new line.
-The prompt is displayed again each time a command has been executed.
-The command lines are simple, no semicolons, no pipes, no redirections or any other advanced features.
-The command lines are made only of one word. No arguments will be passed to programs.
-If an executable cannot be found, print an error message and display the prompt again.
-Handle errors.
-You have to handle the “end of file” condition (Ctrl+D)
-You don’t have to:
+## Introduction
+This repository contains the files to simulate a basic Unix Shell with its respective commands.
 
-use the PATH
-implement built-ins
-handle special characters : ", ', `, \, *, &, #
-be able to move the cursor
-handle commands with arguments
-execve will be the core part of your Shell, don’t forget to pass the environ to it…
+## Description
+This repository contains the executable files to simulate a simple Unix shell with its respective basic commands as well as some advanced ones developed by the contributors. Each functionality of the file will be commented, as well as each line of the function where its compression is not so clear to the naked eye. <br>
+In the Shell you can interact both in interactive and non-interactive mode (explanation and examples in [Modes](https://github.com/ObedRav/holbertonschool-simple_shell/blob/main/README.md#modes).
 
+Project Information
+https://intranet.alxswe.com/projects/235
 
-2. Simple shell 0.2
-Handle command lines with arguments
+Tasks
+Task 0. Betty would be proud
+Task 1. Simple shell 0.1: Write a UNIX command line interpreter(100% done)
+Task 2. Simple shell 0.2: 
+Task 3. Simple shell 0.3
+Task 4. Simple shell 0.4
+Task 5. Simple shell 1.0
+Task 6. What happens when you type ls -l in the shell
 
+## Requeriments
 
-3. Simple shell 0.3
-Handle the PATH
-fork must not be called if the command doesn’t exist
-
-
-4. Simple shell 0.4
-Implement the exit built-in, that exits the shell
-Usage: exit
-You don’t have to handle any argument to the built-in exit
-
-
-5. Simple shell 1.0
-Implement the env built-in, that prints the current environment
-
-    
-6. Simple shell 0.1.1
-
-Write your own getline function
-Use a buffer to read many chars at once and call the least possible the read system call
-You will need to use static variables
-You are not allowed to use getline
-You don’t have to: be able to move the cursor
-
-    
-7. Simple shell 0.2.1
-You are not allowed to use strtok
-
-
-8. Simple shell 0.4.1
-handle arguments for the built-in exit
-Usage: exit status, where status is an integer used to exit the shell
-
-
-9. setenv, unsetenv
-Implement the setenv and unsetenv builtin commands
-
-setenv
-Initialize a new environment variable, or modify an existing one
-Command syntax: setenv VARIABLE VALUE
-Should print something on stderr on failure
-unsetenv
-Remove an environment variable
-Command syntax: unsetenv VARIABLE
-Should print something on stderr on failure
+* Programs and functions will be compiled with ```gcc``` using the flags ```-Wall``` ```-Werror``` ```-Wextra``` ```-pedantic``` and ```-std=gnu89```
+* All files should end with a new line
+* No more than 5 functions per file
+* Operating System: [Ubuntu 20.04 LTS](http://releases.ubuntu.com/20.04/)
+* Compiler: [GCC](https://gcc.gnu.org)
+* Authorized functions and system calls:
+  * ```access``` (```man 2 access```)
+  * ```chdir``` (```man 2 chdir```)
+  * ```close``` (```man 2 close```)
+  * ```closedir``` (```man 3 closedir```)
+  * ```execve``` (```man 2 execve```)
+  * ```exit``` (```man 3 exit```)
+  * ```fork``` (```man 2 fork```)
+  * ```free``` (```man 3 free```)
+  * ```stat``` (```__xstat```)(```man 2 stat```)
+  * ```lstat``` (```__lxstat```)(```man 2 lstat```)
+  * ```fstat``` (```__fxstat```)(```man 2 fstat```)
+  * ```getcwd``` (```man 3 getcwd```)
+  * ```getline``` (```man 3 getline```)
+  * ```kill``` (```man 2 kill```)
+  * ```malloc``` (```man 3 malloc```)
+  * ```open``` (```man 2 open```)
+  * ```opendir``` (```man 3 opendir```)
+  * ```perror``` (```man 3 perror```)
+  * ```read``` (```man 2 read```)
+  * ```readdir``` (```man 3 readdir```)
+  * ```signal``` (```man 2 signal```)
+  * ```strtok``` (```man 3 strtok```)
+  * ```wait``` (```man 2 wait```)
+  * ```waitpid``` (```man 2 waitpid```)
+  * ```wait3``` (```man 2 wait3```)
+  * ```wait4``` (```man 2 wait4```)
+  * ```write``` (```man 2 write```)
+  * ```_exit``` (```man 2 _exit```)
+  * ```isatty``` (```man 3 isatty```)
+  * ```fflush``` (```man 3 fflush```)
 
 
-10. cd
-Implement the builtin command cd:
+## Usage :computer:
+All the files are to be compiled on an Ubuntu 20.04 LTS machine with:
+```
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89
+```
 
-Changes the current directory of the process.
-Command syntax: cd [DIRECTORY]
-If no argument is given to cd the command must be interpreted like cd $HOME
-You have to handle the command cd -
-You have to update the environment variable PWD when you change directory
-man chdir, man getcwd
-
-
-11. ;
-Handle the commands separator ;
-alex@~$ ls /var ; ls /var
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-alex@~$ ls /hbtn ; ls /var
-ls: cannot access /hbtn: No such file or directory
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-alex@~$ ls /var ; ls /hbtn
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-ls: cannot access /hbtn: No such file or directory
-alex@~$ ls /var ; ls /hbtn ; ls /var ; ls /var
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-ls: cannot access /hbtn: No such file or directory
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
+Once compiled, to start the program, run:
+```./hsh```
+  
+To exit the program, run:
+```$ exit```
 
 
-12. && and ||
-Handle the && and || shell logical operators
-alex@~$ ls /var && ls /var
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-alex@~$ ls /hbtn && ls /var
-ls: cannot access /hbtn: No such file or directory
-alex@~$ ls /var && ls /var && ls /var && ls /hbtn
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-ls: cannot access /hbtn: No such file or directory
-alex@~$ ls /var && ls /var && ls /var && ls /hbtn && ls /hbtn
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-ls: cannot access /hbtn: No such file or directory
-alex@~$
-alex@~$ ls /var || ls /var
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-alex@~$ ls /hbtn || ls /var
-ls: cannot access /hbtn: No such file or directory
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-alex@~$ ls /hbtn || ls /hbtn || ls /hbtn || ls /var
-ls: cannot access /hbtn: No such file or directory
-ls: cannot access /hbtn: No such file or directory
-ls: cannot access /hbtn: No such file or directory
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
-alex@~$ ls /hbtn || ls /hbtn || ls /hbtn || ls /var || ls /var
-ls: cannot access /hbtn: No such file or directory
-ls: cannot access /hbtn: No such file or directory
-ls: cannot access /hbtn: No such file or directory
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  spool  tmp
+## List of Files
 
-    
-13. alias
-Implement the alias builtin command
-Usage: alias [name[='value'] ...]
-alias: Prints a list of all aliases, one per line, in the form name='value'
-alias name [name2 ...]: Prints the aliases name, name2, etc 1 per line, in the form name='value'
-alias name='value' [...]: Defines an alias for each name whose value is given. If name is already an alias, replaces its value with value
+| Function Name | Description |
+|---------------- | -----------|
+|[shell.h](https://github.com/ObedRav/holbertonschool-simple_shell/blob/main/shell.h)    | Declaration of all functions to be used in the shell, as well as libriaries|
+|[shell.c](https://github.com/ObedRav/holbertonschool-simple_shell/blob/main/shell.c) | Principal function|
+|[buildin.c](https://github.com/ObedRav/holbertonschool-simple_shell/blob/main/buildin.c) | Contains exit function, string to integer converter and buildin checker |
+|[path.c](https://github.com/ObedRav/holbertonschool-simple_shell/blob/main/path.c) |Contains the functions of: global variable value, adds a new node to the end of a list, creates a linked list for path directories, and finds the path of a file name.  |
+|[exec_line.c](https://github.com/ObedRav/holbertonschool-simple_shell/blob/main/exec_line.c) | Contains the functions of: splitting a string by converting it to an array, reallocating the block of memory, executing a command, and freeing the array of pointers|
+|[strings.c](https://github.com/ObedRav/holbertonschool-simple_shell/blob/main/strings.c) | Contains the functions to: return a pointer in memory, concatenate three strings, write the character to standard output, count chars and print a string.|
 
-     
-14. Variables
-Handle variables replacement
-Handle the $? variable
-Handle the $$ variable
-julien@ubuntu:~/shell$ ./hsh
-$ ls /var
-backups  cache  crash  lib  local  lock  log  mail  metrics  opt  run  snap  spool  tmp
-$ echo $?
-0
-$ echo $$
-5104
-$ echo $PATH
-/home/julien/bin:/home/julien/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
-$ exit 
-julien@ubuntu:~/shell$ 
+## Modes
+The user can have the experience in an interactive and non-interactive way.
 
-    
-15. Comments
-Handle comments (#)
-julien@ubuntu:~/shell$ sh
-$ echo $$ # ls -la
-5114
-$ exit
-julien@ubuntu:~/shell$
+To use the **interactive mode** use . Immediately the user will see a warning $ indicating that our shell is ready to read the command.
+And to exit the program, use the word  ```exit```.
+Example:
+```
+$ ./hsh
+$ /bin/ls
+```
+
+En **non-interactive mode** the user will enter command line arguments,In non-interactive mode, you can pipe commands to the program using echo or cat:
+
+Example:
+```
+$ echo "/bin/ls" | ./hsh
+$ cat file_name | ./hsh
+```
+
+## Bugs
+No known bugs.
 
 
-16. File as input
-Usage: simple_shell [filename]
-Your shell can take a file as a command line argument
-The file contains all the commands that your shell should run before exiting
-The file should contain one command per line
-In this mode, the shell should not print a prompt and should not read from stdin
+## Authors
+* **Samuel Victor** [Github](https://github.com/Derilee)
