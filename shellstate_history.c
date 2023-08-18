@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "main.h"
 
 /**
  * shellstate - gets a list of the shell state
@@ -82,30 +82,29 @@ int printshellstate(void)
 
 int exitshellstate(void)
 {
+    int fd, len;
+    char *file = ".shell_history";
+    char *s;
 
-	int fd, len;
-	char *file = ".shell_history";
-	char *s;
+    ShellState **root = getshellstate();
+    ShellState *shs = *root;
+    ShellState *ptr;
 
-	ShellState **root = getshellstate();
-	ShellState *shs = *root;
-	ShellState *ptr = shs;
+    fd = open(file, O_CREAT | O_RDWR, 0600);
+    if (fd == -1)
+        return (-1);
 
-	fd = open(file, O_CREAT | O_RDWR, 0600);
-	if (fd == -1)
-		return (-1);
+    while (shs != NULL)
+    {
+        ptr = shs->dest;
+        s = shs->cmd;
+        len = _strlen(s);
+        write(fd, s, len);
+        free(s);
+        free(shs);
+        shs = ptr;
+    }
 
-	while (shs != NULL)
-	{
-		ptr = shs->dest;
-		s = shs->cmd;
-		len = _strlen(s);
-		write(fd, s, len);
-		free(shs->cmd);
-		free(shs);
-		shs = ptr;
-	}
-
-	close(fd);
-	return (1);
+    close(fd);
+    return (1);
 }

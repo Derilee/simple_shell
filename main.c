@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "main.h"
 /**
  * main - main method that runs the shell
  * @argc: number of args

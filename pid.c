@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "main.h"
 /**
  * _realloc - reallocates a memory block using malloc and free
  * @ptr: pointer to the previously allocated pointer
@@ -38,7 +38,7 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 	return (resized);
 }
 
-#include "shell.h"
+#include "main.h"
 /**
  * _getline - gets a line from fd or std input
  * @lineptr: buffer to fill line with

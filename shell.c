@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "main.h"
 /**
  * inputchecker - checks input characters
  * @temp: temporary storage to store char
@@ -115,7 +115,7 @@ int shellbatch(char *argv[])
 	ssize_t len = 0, endofline = 0, result = 0;
 
 	input = open(argv[1], O_RDONLY);
-	if (input == -1)
+	if (input == - 1)
 	{
 		printfstr(STDERR_FILENO, argv[0], ": 0: Can't open ",
 			   argv[1], "\n", NULL);

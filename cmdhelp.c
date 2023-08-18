@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "main.h"
 /**
  * runcmd - function that calls and runs cmd commands
  * @argv: arguments passed

@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "main.h"
 /**
  * modallenv - function that modify all environment to a new value
  * @env: environment variable

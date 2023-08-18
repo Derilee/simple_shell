@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "main.h"
 /**
  * initializevars - function to initialize variables
  * @argc: arguemnts counter

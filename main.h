@@ -1,6 +1,5 @@
-#ifndef SHELL_H
-#define SHELL_H
-
+#ifndef MAIN_H
+#define MAIN_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -9,15 +8,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-
-
 extern char **environ;
-
-
 /* main header */
 int main(int argc, char *argv[], char **environ);
-
-
 /* handle string and print string */
 int _putchar(char c);
 void _printstr(char *str);
@@ -29,7 +22,7 @@ int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
 int convertStrToInt(char *str);
 char *itos(int digits);
-char *_strchr(char *str, char ch);
+char *_strchr(char *s, char c);
 int printfstr(int fd, char *str, ...);
 int printerr(char *);
 int linecount(int);
@@ -99,46 +92,35 @@ int exitshellstate(void);
  * @value: given value
  * @dest: pointer to destination of the  next node
  */
-
 typedef struct alias
 {
         char *name;
         char *value;
         struct alias *dest;
 } alias;
-
 alias **fetchall();
 char *fetchalias(char *name);
 int printalias(char *name, char *val);
 int clearalias(char *name);
 int aliasmgt(char *argv[]);
-
-
 /*cmd and path handler */
 int chpath(char *argv[]);
 int runcmd(char *argv[], char *cmd);
 int invokecmd(char *argv[]);
 int processcmd(char *cmd);
-
-
 /* parse and arg handler */
 char *processasgnvar(char *temp);
 char *replacevars(char **temp);
 char *filterarg(char *argc);
 char *handlxpand(char *temp);
 int transargs(char **buf);
-
 /*shell ui handler*/
 int inputchecker(char **temp, int fd);
 int terminal(void);
 int shellbatch(char *argv[]);
-
-
 /*tokenization of string */
 char *strtokenize(char *str, char *delim);
-char *str_toks_quotes(char *str, char *delim, int esc);
+char *strtokqe(char *str, char *delim, int escflags);
 int _cd(char *av[]);
 void exitcleanup(char **av);
-
-
 #endif
