@@ -15,24 +15,27 @@ This repository contains the executable files to simulate a simple Unix shell wi
 In the Shell you can interact both in interactive and non-interactive modes.
 
 
-Tasks <br>
-Task 0. Betty would be proud. <br>
-Task 1. Simple shell 0.1(100% done): Write a UNIX command line interpreter. <br>
-Task 2. Simple shell 0.2(100% done): Handle command lines with arguments. <br>
-Task 3. Simple shell 0.3(100% done): Handle the PATH. Fork must not be called if the command doesn’t exist. <br>
-Task 4. Simple shell 0.4(100% done): Implement the exit built-in, that exits the shell <br>
-Task 5. Simple shell 1.0(100% done): Implement the env built-in, that prints the current environment. <br>
-Task 6. Simple shell 0.1.1(100% done): Write your own getline function. <br>
-Task 7. Simple shell 0.2.1(100% done): You are not allowed to use strtok. <br>
-Task 8. Simple shell 0.4.1(100% done): handle arguments for the built-in exit. <br>
-Task 9. setenv, unsetenv(71.43% done): Implement the setenv and unsetenv builtin commands.<br>
-Task 10. cd(88.89% done): Implement the builtin command cd: Changes the current directory of the process. <br>
-Task 11. ;(100% done): Handle the commands separator ; <br>
-Task 12. && and ||(100% done): Handle the && and || shell logical operators. <br>
-Task 13. alias(50% done): Implement the alias builtin command. <br>
-Task 14. Variables(100% done): Handle variables replacement. Handle the $? variable. Handle the $$ variable. <br>
-Task 15. Comments(20% done): Handle comments (#) <br>
-Task 16. File as input(75% done): Your shell can take a file as a command line argument. <br>
+# Simple Shell Project
+
+## Tasks
+
+- Task 0. Betty would be proud.
+- Task 1. Simple shell 0.1 (100% done): Write a UNIX command line interpreter.
+- Task 2. Simple shell 0.2 (100% done): Handle command lines with arguments.
+- Task 3. Simple shell 0.3 (100% done): Handle the PATH. Fork must not be called if the command doesn’t exist.
+- Task 4. Simple shell 0.4 (100% done): Implement the exit built-in, that exits the shell.
+- Task 5. Simple shell 1.0 (100% done): Implement the env built-in, that prints the current environment.
+- Task 6. Simple shell 0.1.1 (100% done): Write your own getline function.
+- Task 7. Simple shell 0.2.1 (100% done): You are not allowed to use strtok.
+- Task 8. Simple shell 0.4.1 (100% done): Handle arguments for the built-in exit.
+- Task 9. setenv, unsetenv (71.43% done): Implement the setenv and unsetenv builtin commands.
+- Task 10. cd (88.89% done): Implement the builtin command cd: Changes the current directory of the process.
+- Task 11. ; (100% done): Handle the commands separator ;
+- Task 12. && and || (100% done): Handle the && and || shell logical operators.
+- Task 13. alias (50% done): Implement the alias builtin command.
+- Task 14. Variables (100% done): Handle variables replacement. Handle the $? variable. Handle the $$ variable.
+- Task 15. Comments (20% done): Handle comments (#)
+- Task 16. File as input (75% done): Your shell can take a file as a command line argument.
 
 
 ## Requeriments
